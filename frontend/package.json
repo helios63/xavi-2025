@@ -1,0 +1,39 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build && npm run validate-env",
+    "dev": "nuxt dev -o",
+    "validate-env": "node validateEnv.js",
+    "generate": "nuxt generate && npm run validate-env",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "nuxt": "^3.11.1"
+  },
+  "dependencies": {
+    "@nuxtjs/robots": "^3.0.0",
+    "@nuxtjs/sanity": "^1.8.3",
+    "@nuxtjs/sitemap": "^5.1.0",
+    "@nuxtjs/tailwindcss": "^6.10.1",
+    "@pinia/nuxt": "^0.5.1",
+    "@sanity/client": "^6.15.4",
+    "@sanity/image-url": "^1.1.0",
+    "autoprefixer": "^10.4.16",
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
+    "gsap": "npm:@gsap/shockingly@latest",
+    "pinia": "^2.1.7",
+    "postcss": "^8.4.32",
+    "postcss-pxtorem": "^6.0.0",
+    "postcss-viewport-unit-fallback": "^1.0.1",
+    "swiper": "^11.0.5",
+    "tailwindcss": "^3.4.0",
+    "vanilla-cookieconsent": "^3.0.1",
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.0"
+  }
+}
