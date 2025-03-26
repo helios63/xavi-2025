@@ -1,6 +1,6 @@
 <template>
     <Html class="text-base">
-        <Body class="antialiased font-default text-black">
+        <Body class="antialiased font-default text-white bg-black">
             <NuxtLoadingIndicator
                 :throttle="200"
                 :height="3"
@@ -21,7 +21,11 @@ import { getFileExtension } from '@/utils'
 let siteSettingsData = await siteSettings()
 const runtimeConfig = useRuntimeConfig()
 const isProduction = runtimeConfig?.public?.appEnv === 'production'
-const siteUrlIsValid = runtimeConfig?.public?.publicSiteUrl && !runtimeConfig?.public?.publicSiteUrl.includes('netlify.app') && !runtimeConfig?.public?.publicSiteUrl.includes('vercel.app') && !runtimeConfig?.public?.publicSiteUrl.includes('pages.dev')
+const siteUrlIsValid =
+    runtimeConfig?.public?.publicSiteUrl &&
+    !runtimeConfig?.public?.publicSiteUrl.includes('netlify.app') &&
+    !runtimeConfig?.public?.publicSiteUrl.includes('vercel.app') &&
+    !runtimeConfig?.public?.publicSiteUrl.includes('pages.dev')
 const shouldIndexFollow = isProduction && siteUrlIsValid
 const nuxtApp = useNuxtApp()
 const route = useRoute()
@@ -41,7 +45,6 @@ provide('siteSettingsData', siteSettingsData)
 
 useHead({
     meta: [
-        
         {
             name: 'robots',
             content: shouldIndexFollow ? 'index, follow' : 'noindex, nofollow',

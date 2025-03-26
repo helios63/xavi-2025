@@ -5,7 +5,7 @@ import {schemaTypes} from './schemaTypes'
 // Branding customizations
 import BrandLogo from './src/components/BrandLogo'
 
-// components 
+// components
 import PreviewLink from './src/components/PreviewLink'
 
 // plugins
@@ -13,7 +13,7 @@ import {visionTool} from '@sanity/vision'
 import {media} from 'sanity-plugin-media'
 import {dashboardTool} from '@sanity/dashboard'
 import {netlifyWidget} from 'sanity-plugin-dashboard-widget-netlify'
-import { structure } from './src/structure'
+import {structure} from './src/structure'
 import {inlineSvgInput} from '@focus-reactive/sanity-plugin-inline-svg-input'
 import CloudflareDeploy from './plugins/CloudflareDeploy'
 
@@ -30,15 +30,17 @@ export const isDev = process.env.NODE_ENV === 'development'
 
 export default defineConfig({
   name: 'default',
-  title: 'LLOS Content Studio',
+  title: 'Xavi Noguera',
   projectId: projectId,
   dataset: dataset,
   icon: BrandLogo,
-  tools: [{
-    title: 'Preview site',
-    name: 'preview-link',
-    component: PreviewLink,
-  }],
+  tools: [
+    {
+      title: 'Preview site',
+      name: 'preview-link',
+      component: PreviewLink,
+    },
+  ],
   document: {
     // prev is the result from previous plugins and thus can be composed
     productionUrl: async (prev, context) => {
@@ -83,7 +85,7 @@ export default defineConfig({
       },
     },
   },
-  
+
   // plugins configuration
   plugins: [
     // structure tool controls the elements and order of the sidebar and the top bar of the studio UI

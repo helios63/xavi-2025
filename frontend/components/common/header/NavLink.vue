@@ -1,10 +1,10 @@
 <template>
-    <CommonLink 
+    <CommonLink
         :link="item?.link"
-        active-class="text-blue"
-        class="nav-link hover:underline transition-colors"
+        active-class="text-red"
+        class="nav-link transition-colors"
     >
-       {{ item?.text }}
+        {{ item?.text }}
     </CommonLink>
 </template>
 <script setup>

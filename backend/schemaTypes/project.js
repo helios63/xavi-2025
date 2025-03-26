@@ -53,23 +53,25 @@ export default {
       name: 'categories',
       title: 'Categories',
       type: 'array',
-      of: [{
-        type: 'reference', 
-        to: {type: 'category'},
-        options: {
-          disableNew: true,
-          filter: ({ parent, document }) => {
+      of: [
+        {
+          type: 'reference',
+          to: {type: 'category'},
+          options: {
+            disableNew: true,
+            filter: ({parent, document}) => {
               const selectedRefs = parent
-                  ? parent.map((item) => item._ref).filter((ref) => typeof ref === 'string')
-                  : []
+                ? parent.map((item) => item._ref).filter((ref) => typeof ref === 'string')
+                : []
 
               return {
-                  filter: '!(_id in $selectedRefs)',
-                  params: { selectedRefs },
+                filter: '!(_id in $selectedRefs)',
+                params: {selectedRefs},
               }
+            },
           },
-      },
-      }],
+        },
+      ],
       group: 'project',
     },
     {
@@ -80,13 +82,15 @@ export default {
       group: 'project',
       options: {
         hotspot: true,
-      }
+      },
     },
     {
-      name: 'content',
-      title: 'Main content',
-      type: 'blockContent',
+      title: 'Main content - Page Builder',
+      name: 'pageBuilder',
+      type: 'pageBuilder',
       group: 'project',
+      description:
+        'This is the main content of the page. It works as a flexible page builder, you can add block types like text, media, and galleries. using the "Add item" button.',
     },
     {
       title: 'SEO',

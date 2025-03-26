@@ -11,22 +11,22 @@ module.exports = {
         extend: {
             fontFamily: {
                 // use font family here. Default is for the main font of the site, secondary usually for headings or other featured elements
-                default: 'system-ui, sans-serif'
+                default: 'system-ui, sans-serif',
                 // secondary: ['ABCDiatype', 'sans-serif'],
             },
         },
         container: {
-            center: true,      
+            center: true,
             // default breakpoints but with 40px removed
-            screens: {
-              md: '640px',
-            },
+            // screens: {
+            //     md: '640px',
+            // },
         },
         colors: {
-            white: '#ffffff',
-            black: '#000000',
+            white: '#eeeeee',
+            black: '#1e1e27',
             blue: '#0000ff',
-            gray: '#f8f8f8',
+            red: '#b81c09',
         },
 
         fontSize: {

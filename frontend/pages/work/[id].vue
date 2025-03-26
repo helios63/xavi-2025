@@ -1,11 +1,14 @@
 <template>
     <div class="article-body flex flex-col flex-1 h-full gap-y-2">
-        <CommonBackButton class="uppercase text-right">Back to archive</CommonBackButton>
-        <CommonBlockContent
+        <CommonBackButton class="uppercase text-right"
+            >Back to archive</CommonBackButton
+        >
+        <!-- <CommonBlockContent
             :blocks="projectData?.content"
             :title="projectData?.title"
             class="container border p-4"
-        />
+        /> -->
+        <CommonPageBuilder class="" :blocks="projectData?.pageBuilder" />
     </div>
 </template>
 

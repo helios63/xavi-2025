@@ -1,9 +1,9 @@
 <template>
     <NuxtLink
-        class="hover:text-blue transition-colors"
+        class="text-white hover:underline transition-colors"
         :external="linkType == 'external'"
         :to="getLinkUrl()"
-        :target="(link?.isInternalLink) ? '' : '_blank'"
+        :target="link?.isInternalLink ? '' : '_blank'"
         rel="noopener"
     >
         <slot />
