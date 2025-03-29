@@ -7,6 +7,9 @@
         <!-- Example of how to use page builder content strategy: -->
         <!-- <h2 class="uppercase mt-8">Page builder example: </h2>
         <CommonPageBuilder class="border p-4" :blocks="homeData?.pageBuilder" /> -->
+        <div class="w-full h-dvh flex flex-col items-center justify-center">
+            <NuxtLink to="/work/" class="uppercase">Enter</NuxtLink>
+        </div>
     </div>
 </template>
 

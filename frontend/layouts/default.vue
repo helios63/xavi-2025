@@ -1,6 +1,5 @@
 <template>
     <div id="main-content-wrapper" class="flex flex-col min-h-svh">
-
         <!-- Header -->
         <CommonHeader
             class="sticky top-0 left-0 w-full z-10"
@@ -12,18 +11,18 @@
         <!-- Main content -->
         <main
             id="main-content"
-            class="relative flex flex-1 flex-col h-full max-w-full p-2"
+            class="relative flex flex-1 flex-col h-full max-w-full"
         >
             <slot />
         </main>
         <!-- Footer -->
-            <CommonFooter
-                class="relative"
-                :contact="siteSettingsData?.contact"
-                :socialLinks="siteSettingsData?.socialLinks"
-                :legalLinks="siteSettingsData?.legalLinks"
-                :credits="siteSettingsData?.credits"
-            />
+        <CommonFooter
+            class="fixed top-0 right-0 w-full md:w-1/3"
+            :contact="siteSettingsData?.contact"
+            :socialLinks="siteSettingsData?.socialLinks"
+            :legalLinks="siteSettingsData?.legalLinks"
+            :credits="siteSettingsData?.credits"
+        />
 
         <!-- Cookie Banner -->
         <ClientOnly>
@@ -42,5 +41,4 @@
 // The slot is used to render the main content of the page, which is automatically passed in from the page component.
 
 const siteSettingsData = inject('siteSettingsData')
-
 </script>

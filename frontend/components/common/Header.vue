@@ -1,6 +1,9 @@
 <template>
     <header id="header" ref="header" class="left-0 w-full uppercase">
-        <nav id="main-nav" class="flex justify-between w-full p-2 leading-none">
+        <nav
+            id="main-nav"
+            class="fixed top-0 left-0 flex justify-between w-full p-2 leading-none"
+        >
             <div
                 class="flex items-center gap-x-2"
                 v-if="navItems && navItems?.length > 0"
@@ -19,7 +22,7 @@
             </div>
             <NuxtLink
                 to="/"
-                class="flex transition-colors"
+                class="absolute top-2 left-1/2 -translate-x-1/2 flex transition-colors"
                 active-class="text-red"
             >
                 <CommonHeaderBrandLogo
@@ -27,7 +30,6 @@
                     :siteName="siteName"
                 />
             </NuxtLink>
-            <button class="hover:underline">INFO</button>
         </nav>
     </header>
 </template>

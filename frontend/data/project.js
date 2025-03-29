@@ -13,7 +13,10 @@ export const getProjectBySlug = async projectSlug => {
       featuredImage {
         ${imageQuery}
       },
-      ${pageBuilder}
+      description,
+      pictures[] {
+        ${imageQuery}
+      }
     }`
     const key = `work-${projectSlug}`
     const { data } = await useAsyncData(key, () =>

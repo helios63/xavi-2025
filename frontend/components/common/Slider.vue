@@ -1,10 +1,10 @@
 <template>
     <div
         ref="swiperContainer"
-        class="swiper flex flex-col flex-1 relative w-full h-full"
+        class="swiper flex flex-col relative w-full h-full"
     >
         <div class="swiper-wrapper">
-            <div class="swiper-slide" v-for="image in images">
+            <div class="swiper-slide p-2 md:p-12" v-for="image in images">
                 <CommonMediaImage
                     class="w-full h-full block object-contain object-center"
                     :image="image"
@@ -13,7 +13,7 @@
                 />
             </div>
         </div>
-        <div class="swiper-pagination absolute bottom-0 right-0 p-2"></div>
+        <div class="swiper-pagination absolute bottom-0 left-0 p-2"></div>
         <div
             class="swiper-button-prev swiper-prev absolute top-0 left-0 w-1/2 h-full z-10"
         ></div>
@@ -70,7 +70,7 @@ const initSwiper = () => {
     changeSlide(props.currentSlide, 0)
 }
 
-const changeSlide = (index, duration=600) => {
+const changeSlide = (index, duration = 600) => {
     swiper.slideTo(index, duration)
 }
 

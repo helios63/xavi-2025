@@ -23,10 +23,10 @@ module.exports = {
             // },
         },
         colors: {
-            white: '#eeeeee',
+            white: '#e2fffc',
             black: '#1e1e27',
             blue: '#0000ff',
-            red: '#b81c09',
+            red: '#f33c17',
         },
 
         fontSize: {

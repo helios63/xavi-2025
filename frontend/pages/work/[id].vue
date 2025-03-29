@@ -1,6 +1,7 @@
 <template>
-    <div class="article-body flex flex-col flex-1 h-full gap-y-2">
-        <CommonBackButton class="uppercase text-right"
+    <div class="article-body h-dvh">
+        <CommonBackButton
+            class="fixed bottom-0 right-0 p-2 z-20 uppercase text-right"
             >Back to archive</CommonBackButton
         >
         <!-- <CommonBlockContent
@@ -8,7 +9,18 @@
             :title="projectData?.title"
             class="container border p-4"
         /> -->
-        <CommonPageBuilder class="" :blocks="projectData?.pageBuilder" />
+        <!-- <CommonPageBuilder class="" :blocks="projectData?.pageBuilder" /> -->
+        <CommonInfoPopup
+            v-if="projectData?.description"
+            :description="projectData?.description"
+            :categories="projectData?.categories"
+            class="fixed bottom-2 left-1/2 -translate-x-1/2 z-50"
+        />
+        <CommonSlider
+            :images="projectData?.pictures"
+            :currentSlide="0"
+            class="h-dvh"
+        />
     </div>
 </template>
 
@@ -19,6 +31,7 @@ import { getProjectBySlug } from '@/data/project'
 const route = useRoute()
 const routeName = route.name
 const projectData = await getProjectBySlug(route.params.id)
+// console.log(projectData)
 const bodyClass = buildBodyClass(routeName)
 definePageMeta({
     layout: 'default',

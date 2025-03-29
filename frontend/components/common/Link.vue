@@ -1,6 +1,6 @@
 <template>
     <NuxtLink
-        class="text-white hover:underline transition-colors"
+        class="transition-colors"
         :external="linkType == 'external'"
         :to="getLinkUrl()"
         :target="link?.isInternalLink ? '' : '_blank'"

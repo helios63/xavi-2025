@@ -1,6 +1,6 @@
 <template>
-    <div class="container mx-auto">
-        <section class="projects grid grid-cols-12 gap-2">
+    <div class="container mx-auto py-12">
+        <section class="projects grid grid-cols-12 gap-2 p-2">
             <article
                 v-for="project in projectsData"
                 :key="project._id"

@@ -85,12 +85,25 @@ export default {
       },
     },
     {
-      title: 'Main content - Page Builder',
-      name: 'pageBuilder',
-      type: 'pageBuilder',
+      name: 'description',
+      title: 'Description',
+      type: 'text',
       group: 'project',
-      description:
-        'This is the main content of the page. It works as a flexible page builder, you can add block types like text, media, and galleries. using the "Add item" button.',
+    },
+    // {
+    //   title: 'Main content - Page Builder',
+    //   name: 'pageBuilder',
+    //   type: 'pageBuilder',
+    //   group: 'project',
+    //   description:
+    //     'This is the main content of the page. It works as a flexible page builder, you can add block types like text, media, and galleries. using the "Add item" button.',
+    // },
+    {
+      title: 'Pictures',
+      name: 'pictures',
+      group: 'project',
+      type: 'array',
+      of: [{type: 'image'}],
     },
     {
       title: 'SEO',
