@@ -1,5 +1,9 @@
 <template>
-    <ul ref="mainNav" class="flex gap-x-2 items-center" v-show="menuIsOpened">
+    <ul
+        ref="mainNav"
+        class="w-full flex gap-x-2 items-center"
+        v-show="menuIsOpened"
+    >
         <li v-for="item in items" class="flex h-full items-center">
             <CommonHeaderNavLink :item="item" />
         </li>

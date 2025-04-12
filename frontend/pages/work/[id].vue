@@ -1,7 +1,7 @@
 <template>
     <div class="article-body h-dvh">
         <CommonBackButton
-            class="fixed bottom-0 right-0 p-2 z-20 uppercase text-right"
+            class="fixed bottom-0 right-0 p-2 z-[60] uppercase text-right"
             >Back to archive</CommonBackButton
         >
         <!-- <CommonBlockContent
@@ -33,6 +33,10 @@ const routeName = route.name
 const projectData = await getProjectBySlug(route.params.id)
 // console.log(projectData)
 const bodyClass = buildBodyClass(routeName)
+
+const pageTitle = useState('page-title', () => '')
+pageTitle.value = projectData?.value?.title || ''
+
 definePageMeta({
     layout: 'default',
     // Add scroll reset. By default nuxt does not reset scroll to top for child routes

@@ -1,6 +1,6 @@
 <template>
-    <div class="popup flex flex-col items-center gap-8">
-        <div v-if="isPopupOpen" class="popup-content max-w-xl">
+    <div class="popup w-full flex flex-col items-center gap-8">
+        <div v-if="isPopupOpen" class="popup-content md:max-w-xl">
             <div class="bg-black/80 rounded-md backdrop-blur p-4 text-sm">
                 <!-- <ul>
                     <li

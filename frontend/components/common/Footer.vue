@@ -1,5 +1,5 @@
 <template>
-    <footer id="footer" class="z-10 pointer-events-none">
+    <footer id="footer" class="z-[70] pointer-events-none">
         <button
             @click="togglePopup"
             class="p-2 fixed top-0 right-0 z-10 uppercase cursor-pointer pointer-events-auto"

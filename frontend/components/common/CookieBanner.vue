@@ -236,13 +236,12 @@ body #cc-main {
     --cc-z-index: 2147483647;
 }
 
-
 body #cc-main .cm__texts {
     @apply w-full max-w-[1280px] p-0;
 }
 
 body #cc-main .cc--anim .cm {
-    @apply max-w-none m-0 rounded-none p-0 bg-white text-black left-0 bottom-0 shadow-none scale-100 text-[100%];
+    @apply max-w-none m-0 rounded-none p-0 bg-black text-white left-0 bottom-0 shadow-none scale-100 text-[100%];
 }
 
 body #cc-main .cm,
@@ -251,7 +250,7 @@ body .show--consent #cc-main .cc--anim .cm {
 }
 
 body #cc-main .cm .cc-message-wrapper {
-    @apply block leading-normal text-black;
+    @apply block leading-normal text-white;
 }
 
 body #cc-main .cm button,
@@ -260,7 +259,7 @@ body #cc-main .cm button:hover,
 body #cc-main .cm a,
 body #cc-main .cm a:visited,
 body #cc-main .cm a:hover {
-    @apply text-black bg-[transparent] border-black border-none rounded-none font-normal p-0 font-default text-[14px] transition-none hover:bg-none;
+    @apply text-white bg-[transparent] border-black border-none rounded-none font-normal p-0 font-default text-[14px] transition-none hover:bg-none;
 }
 
 body #cc-main .pm__service-icon {
@@ -287,7 +286,7 @@ body #cc-main .cm [data-cc='c-settings'] {
 } */
 #cc-main .cm--cloud .cm__body {
     @apply !p-[16px] gap-[16px];
-    border-top: 1px solid #000;
+    border-top: 1px solid #ffffff;
 }
 
 body #cc-main .cm--cloud .cm__desc {
@@ -303,7 +302,7 @@ body #cc-main .cm--cloud .cm__btns {
 }
 
 body #cc-main .cm-wrapper .cm__btn-group button {
-    @apply flex items-center my-auto py-[10px] px-[20px] min-w-[124px] border border-black border-solid text-center justify-center rounded-full leading-none min-h-0 h-fit !m-auto;
+    @apply flex items-center my-auto py-[10px] px-[20px] min-w-[124px] border border-white border-solid text-center justify-center rounded-full leading-none min-h-0 h-fit !m-auto;
 }
 
 body #cc-main .cm__btn-group button:hover {

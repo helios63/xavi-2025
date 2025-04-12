@@ -2,7 +2,6 @@
     <div id="main-content-wrapper" class="flex flex-col min-h-svh">
         <!-- Header -->
         <CommonHeader
-            class="sticky top-0 left-0 w-full z-10"
             :siteName="siteSettingsData?.siteTitle"
             :siteLogo="siteSettingsData?.siteLogo"
             :navItems="siteSettingsData?.mainNav?.items"
