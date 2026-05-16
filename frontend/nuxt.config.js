@@ -21,8 +21,11 @@ export default defineNuxtConfig({
     app: {
         pageTransition: {
             name: 'page',
-            mode: 'out-in',
         },
+        // View Transitions API for shared-element morph between
+        // homepage thumbnails and /work/[slug] hero. Falls back to
+        // the regular `page` transition above on unsupported browsers.
+        viewTransition: true,
         head: {
             htmlAttrs: {
                 lang: 'en',
@@ -35,10 +38,10 @@ export default defineNuxtConfig({
     },
 
     nitro: {
-        routeRules: {
+        routeRules: isProduction ? {
             // prerender all pages, full static
             '/**/**': { prerender: true },
-        },
+        } : {},
     },
     postcss: {
         plugins: {

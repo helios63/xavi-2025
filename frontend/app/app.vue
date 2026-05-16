@@ -94,18 +94,40 @@ useHead({
 
 <style>
 @reference "./assets/styles/global.css";
-/* Page transitions */
+/*
+ * Page transitions
+ * - Modern browsers use the View Transitions API (enabled in nuxt.config.js)
+ *   which gives us a real cross-document/shared-element morph between the
+ *   homepage thumbnail and /work/[slug] hero.
+ * - These Vue-level transitions are the fallback for browsers that do not
+ *   support View Transitions: a quick fade so the route swap stays smooth.
+ */
 .page-enter-active,
 .page-leave-active,
 .layout-enter-active,
 .layout-leave-active {
-    @apply transition-all duration-200;
+    @apply transition-opacity duration-300 ease-out;
 }
 
 .page-enter-from,
 .page-leave-to,
 .layout-enter-from,
 .layout-leave-to {
-    @apply opacity-0 blur-lg;
+    @apply opacity-0;
+}
+
+/* Default exit timing for view-transition elements that don't morph (e.g.
+   the non-clicked thumbnails on the homepage). Keeps the gallery from
+   harshly snapping out when a single card is morphed. */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 0.45s;
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+::view-transition-old(project-image),
+::view-transition-new(project-image) {
+    animation-duration: 0.6s;
+    animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
 }
 </style>

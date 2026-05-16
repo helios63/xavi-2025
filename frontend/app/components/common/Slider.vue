@@ -191,4 +191,8 @@ defineExpose({
     background-repeat: no-repeat;
     opacity: 0.3;
 }
+
+:deep(.swiper-navigation-icon){
+  @apply hidden;
+}
 </style>
