@@ -56,6 +56,7 @@ let canvasPxW = 1
 let canvasPxH = 1
 let rafId = null
 let resizeObs = null
+let interObs = null
 let textureReady = false
 let coverScale = [1, 1]
 let texW = 1
@@ -227,8 +228,13 @@ const uploadTexture = imageEl => {
     )
     textureReady = true
     computeCover()
-    // Paint the idle (pixelated) state right away.
     draw(currentProgress)
+    // Trigger may have fired (hover / viewport entry) before the texture was
+    // ready — kick off the lerp now if there's a pending target.
+    if (targetProgress !== currentProgress && rafId == null) {
+        lastFrameTime = 0
+        rafId = requestAnimationFrame(tickProgress)
+    }
 }
 
 const draw = p => {
@@ -248,6 +254,10 @@ const dispose = () => {
     if (resizeObs) {
         resizeObs.disconnect()
         resizeObs = null
+    }
+    if (interObs) {
+        interObs.disconnect()
+        interObs = null
     }
     if (hostEl && hoverListeners) {
         hostEl.removeEventListener('mouseenter', hoverListeners.enter)
@@ -340,16 +350,34 @@ const attachHover = () => {
     hostEl.addEventListener('focusout', hoverListeners.leave)
 }
 
+const attachReveal = () => {
+    // Touch path: one-shot reveal when the card enters viewport, no
+    // re-pixelation on exit. Disconnect after the first intersection.
+    interObs = new IntersectionObserver(
+        entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    setTarget(1)
+                    if (interObs) {
+                        interObs.disconnect()
+                        interObs = null
+                    }
+                }
+            })
+        },
+        { threshold: 0.3 },
+    )
+    interObs.observe(wrapEl.value)
+}
+
 onMounted(() => {
     if (typeof window === 'undefined') return
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const hasHover = window.matchMedia('(hover: hover)')
-    // Touch / reduced-motion: pixelating-without-hover would just permanently
-    // hide the image, so skip WebGL and render the plain img.
-    if (reducedMotion.matches || !hasHover.matches) {
+    if (reducedMotion.matches) {
         useFallback.value = true
         return
     }
+    const hasHover = window.matchMedia('(hover: hover)').matches
 
     nextTick(() => {
         if (!wrapEl.value || !canvasEl.value) return
@@ -364,7 +392,11 @@ onMounted(() => {
             if (rafId == null && gl && textureReady) draw(currentProgress)
         })
         resizeObs.observe(wrapEl.value)
-        attachHover()
+        if (hasHover) {
+            attachHover()
+        } else {
+            attachReveal()
+        }
         loadTextureImage()
     })
 })
