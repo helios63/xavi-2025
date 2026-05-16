@@ -15,6 +15,7 @@ const props = defineProps({
 </script>
 
 <style scoped>
+@reference "../../../assets/styles/global.css";
 .logo-wrapper :deep(svg) {
     @apply h-full w-auto;
 }

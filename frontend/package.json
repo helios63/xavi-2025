@@ -12,29 +12,28 @@
         "generate-debug": "nuxt generate --log-level debug"
     },
     "devDependencies": {
-        "@nuxt/devtools": "latest",
-        "nuxt": "^3.11.1"
+        "nuxt": "^4.4.5"
     },
     "dependencies": {
-        "@nuxtjs/robots": "^3.0.0",
-        "@nuxtjs/sanity": "^1.8.3",
-        "@nuxtjs/sitemap": "^5.1.0",
-        "@nuxtjs/tailwindcss": "^6.10.1",
-        "@pinia/nuxt": "^0.5.1",
-        "@sanity/client": "^6.15.4",
-        "@sanity/image-url": "^1.1.0",
-        "autoprefixer": "^10.4.16",
-        "axios": "^1.7.2",
-        "dotenv": "^16.4.5",
+        "@nuxtjs/robots": "^6.0.8",
+        "@nuxtjs/sanity": "^2.3.0",
+        "@nuxtjs/sitemap": "^8.0.15",
+        "@pinia/nuxt": "^0.11.3",
+        "@sanity/client": "^7.22.0",
+        "@sanity/image-url": "^2.1.1",
+        "@tailwindcss/postcss": "^4.3.0",
+        "autoprefixer": "^10.5.0",
+        "axios": "^1.16.1",
+        "dotenv": "^17.4.2",
         "gsap": "npm:@gsap/shockingly@latest",
-        "pinia": "^2.1.7",
-        "postcss": "^8.4.32",
-        "postcss-pxtorem": "^6.0.0",
+        "pinia": "^3.0.4",
+        "postcss": "^8.5.14",
+        "postcss-pxtorem": "^6.1.0",
         "postcss-viewport-unit-fallback": "^1.0.1",
-        "swiper": "^11.0.5",
-        "tailwindcss": "^3.4.0",
-        "vanilla-cookieconsent": "^3.0.1",
-        "vue": "^3.4.21",
-        "vue-router": "^4.3.0"
+        "swiper": "^12.1.4",
+        "tailwindcss": "^4.3.0",
+        "vanilla-cookieconsent": "^3.1.0",
+        "vue": "^3.5.34",
+        "vue-router": "^5.0.7"
     }
 }

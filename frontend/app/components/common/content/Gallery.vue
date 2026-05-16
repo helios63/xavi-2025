@@ -37,7 +37,8 @@ const exitFullscreen = () => {
 </script>
 
 <style scoped>
+@reference "../../../assets/styles/global.css";
 .overlayed::before {
-    @apply absolute inset-0 bg-white bg-opacity-90 w-full h-full content-[''];
+    @apply absolute inset-0 bg-white/90 w-full h-full content-[''];
 }
 </style>

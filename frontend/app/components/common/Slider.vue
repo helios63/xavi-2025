@@ -152,6 +152,7 @@ defineExpose({
 </script>
 
 <style scoped>
+@reference "../../assets/styles/global.css";
 .swiper-button {
     @apply mix-blend-difference;
 }

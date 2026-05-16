@@ -21,7 +21,7 @@
                 v-if="media?.videoUrl && !hasAutoplay && !isPlaying"
                 @click="togglePlay"
                 aria-label="Play video"
-                class="absolute top-0 lef-0 bg-black bg-opacity-30 w-full h-full text-white flex justify-center items-center"
+                class="absolute top-0 lef-0 bg-black/30 w-full h-full text-white flex justify-center items-center"
             >
                 <svg
                     class="w-16 h-auto pointer-events-none"

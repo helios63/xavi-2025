@@ -93,6 +93,7 @@ useHead({
 </script>
 
 <style>
+@reference "./assets/styles/global.css";
 /* Page transitions */
 .page-enter-active,
 .page-leave-active,

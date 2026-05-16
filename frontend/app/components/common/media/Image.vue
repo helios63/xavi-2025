@@ -24,10 +24,10 @@
 </template>
 
 <script setup>
-import imageUrlBuilder  from '@sanity/image-url'
+import { createImageUrlBuilder } from '@sanity/image-url'
 
 const config = useRuntimeConfig()
-const builder = imageUrlBuilder({
+const builder = createImageUrlBuilder({
     projectId: config.public.sanity.projectId,
     dataset: config.public.sanity.dataset,
     apiVersion: config.public.sanity.apiVersion,

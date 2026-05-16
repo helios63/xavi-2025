@@ -82,6 +82,7 @@ const portableTextSerializers = {
 }
 </script>
 <style scoped>
+@reference "../../assets/styles/global.css";
 .content :deep(h1),
 .content :deep(h2),
 .content :deep(h3) {

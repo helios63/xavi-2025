@@ -224,6 +224,7 @@ onMounted(() => {
 </script>
 
 <style>
+@reference "../../assets/styles/global.css";
 /* TODO: refactor banner to improve styles management (we are mixing two versions of the plugin) */
 /* cookie banner */
 

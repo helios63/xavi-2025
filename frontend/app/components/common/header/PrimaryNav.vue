@@ -19,6 +19,7 @@ const mainNav = ref(null)
 </script>
 
 <style scoped>
+@reference "../../../assets/styles/global.css";
 .current-nav-item {
     @apply text-red;
 }
