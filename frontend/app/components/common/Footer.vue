@@ -10,7 +10,7 @@
             class="popup p-4 bg-black/80 backdrop-blur h-dvh transition-transform duration-300 flex flex-col justify-end gap-y-4 pointer-events-auto"
             :class="isPopupOpen ? 'translate-x-0' : 'translate-x-full'"
         >
-            <ul class="flex flex-col gap-y-4 *:text-sm">
+            <ul class="flex flex-col gap-y-4 *:text-sm *:md:text-base">
                 <li v-if="contact?.address" class="py-1 lg:py-0">
                     <div
                         class="not-italic whitespace-pre-line"
@@ -18,7 +18,7 @@
                     />
                 </li>
                 <li v-if="contact?.email">
-                    <span class="uppercase underline">Contact me</span>
+                    <!-- <span class="uppercase underline">Contact me</span> -->
                     <a
                         :href="'mailto:' + contact.email"
                         class="hover:underline block py-1 lg:py-0"
@@ -37,7 +37,7 @@
                     >
                 </li>
             </ul>
-            <ul class="text-sm">
+            <ul class="text-sm md:text-base">
                 <li v-for="item in socialLinks">
                     <a
                         target="_blank"

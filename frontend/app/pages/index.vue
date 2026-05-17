@@ -42,7 +42,7 @@
                     v-for="(project, index) in projectsData"
                     :key="project._id"
                     :ref="(el) => setCardRef(el, index)"
-                    class="home-card relative shrink-0 h-[78vh] aspect-3/4"
+                    class="home-card relative shrink-0 h-[50vh] md:h-[78vh] aspect-3/4"
                 >
                     <NuxtLink
                         :to="`/work/${project?.slug?.current}`"
@@ -83,10 +83,10 @@
 
                         <!-- Title under card -->
                         <div
-                            class="absolute -bottom-10 left-0 right-0 flex items-baseline justify-between gap-4"
+                            class="absolute -bottom-6 left-0 right-0 flex items-baseline justify-between gap-4"
                         >
                             <h2
-                                class="uppercase font-medium tracking-tight text-white text-[clamp(1rem,1.4vw,1.5rem)] leading-none"
+                                class="uppercase font-medium tracking-tight text-base text-white leading-none"
                             >
                                 {{ project?.title }}
                             </h2>
