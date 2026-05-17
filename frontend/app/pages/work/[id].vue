@@ -82,7 +82,7 @@
                         mobileWidth="1100"
                     />
                   </div>
-                    
+
                     <figcaption
                         class="mt-2 uppercase text-sm text-white/40 flex justify-between"
                     >
@@ -101,9 +101,20 @@
             </figure>
         </section>
 
+        <!-- Marmoset 3D Viewer -->
+        <section
+            v-if="marmosetUrl"
+            class="marmoset-section relative w-full px-2 md:px-8 py-[10vh] flex flex-col items-center gap-2 md:gap-6"
+        >
+            <ClientOnly>
+                <div id="marmoset-viewer" ref="marmosetContainer" class="w-full md:max-w-[92vw] h-[66vh] md:h-auto md:aspect-video bg-white/5" />
+            </ClientOnly>
+                        <span class="uppercase text-sm text-white/40 self-start">3D Viewer</span>
+        </section>
+
         <!-- Foot navigation -->
         <section
-            class="foot-nav relative w-full py-[14vh] px-4 md:px-8 flex flex-col gap-y-2"
+            class="foot-nav relative w-full py-[14vh] px-2 md:px-8 flex flex-col gap-y-2"
         >
             <NuxtLink
                 v-if="nextProject"
@@ -166,6 +177,27 @@ useSeoObject(
     projectData?.value?.title,
     projectData?.value?.featuredImage,
 )
+
+const marmosetUrl = computed(() => projectData?.value?.marmosetFile?.asset?.url ?? null)
+const marmosetContainer = ref(null)
+
+watch(marmosetContainer, async (el) => {
+    if (!el || !marmosetUrl.value) return
+    await new Promise((resolve, reject) => {
+        const s = document.createElement('script')
+        s.src = 'https://viewer.marmoset.co/main/marmoset.js'
+        s.onload = resolve
+        s.onerror = reject
+        document.head.appendChild(s)
+    })
+    await new Promise(r => requestAnimationFrame(r))
+    await new Promise(r => requestAnimationFrame(r))
+    const w = el.offsetWidth || 960
+    const h = el.offsetHeight || Math.round((w * 9) / 16)
+    const viewer = new window.marmoset.WebViewer(w, h, marmosetUrl.value)
+    el.appendChild(viewer.domRoot)
+    try { viewer.start() } catch { /* self-initializes when element is visible */ }
+}, { flush: 'post' })
 
 const year = computed(() => {
     const d = projectData?.value?.date

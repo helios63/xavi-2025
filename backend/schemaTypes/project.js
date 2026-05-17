@@ -106,6 +106,15 @@ export default {
       of: [{type: 'image'}],
     },
     {
+      title: 'Marmoset Viewer File (.mview)',
+      name: 'marmosetFile',
+      group: 'project',
+      type: 'file',
+      options: {
+        accept: '.mview',
+      },
+    },
+    {
       title: 'SEO',
       name: 'seo',
       type: 'seo',

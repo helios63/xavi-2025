@@ -23,15 +23,28 @@
             </div>
             <NuxtLink
                 to="/"
-                class="flex flex-col md:flex-row md:gap-4 transition-colors"
+                class="flex flex-col md:flex-row md:gap-2 transition-colors"
                 active-class="text-red"
             >
-                <CommonHeaderBrandLogo
+                <!-- <CommonHeaderBrandLogo
                     :siteLogo="siteLogo"
                     :siteName="siteName"
-                />
-                <h2 class="uppercase text-white">3D Character Artist</h2>
-                <h3 class="uppercase text-red">{{ pageTitle }}</h3>
+                /> -->
+                <h1
+                    class="font-secondary uppercase text-md text-black bg-white leading-none px-1"
+                    :class="{ 'preload-mask': preloadActive, 'is-revealed': preloadStep >= 1 }"
+                >{{ siteName }}</h1>
+                <h2
+                    class="font-secondary uppercase text-md text-black bg-white leading-none px-1"
+                    :class="{ 'preload-mask': preloadActive, 'is-revealed': preloadStep >= 2 }"
+                >3D Character Artist</h2>
+                <Transition name="page-title" mode="out-in" appear>
+                    <h3
+                        v-if="preloadStep >= 3 && pageTitle"
+                        :key="pageTitle"
+                        class="font-secondary uppercase text-md text-black bg-red leading-none px-1"
+                    >{{ pageTitle }}</h3>
+                </Transition>
             </NuxtLink>
         </nav>
     </header>
@@ -53,6 +66,8 @@ const toggleMenuState = () => {
 const header = ref(null)
 
 const pageTitle = useState('page-title', () => '')
+const preloadStep = useState('home-preload-step', () => 99)
+const preloadActive = useState('home-preload-active', () => false)
 
 onBeforeMount(() => {
     // add matchmedia to open or close menu both on load or on change

@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Bytesized&family=Lexend:wght@100..900&display=swap');
+
 
 @source "../../components";
 @source "../../layouts";
@@ -14,13 +16,15 @@
     --color-blue: #0000ff;
     --color-red: #f33c17;
 
-    --font-default: system-ui, sans-serif;
-    /* --font-secondary: ABCDiatype, sans-serif; */
+    --font-default: "Lexend", sans-serif;
+    --font-secondary: "Bytesized", sans-serif;
 
     --text-sm: 12px;
     --text-sm--line-height: 1.25;
     --text-base: 100%;
     --text-base--line-height: normal;
+    --text-md: 20px;
+    --text-md--line-height: 1;
     --text-lg: 32px;
     --text-lg--line-height: 1.1;
 }
@@ -35,3 +39,51 @@
     font-style: normal;
     font-display: swap;
 } */
+
+/* Home preload sequence: mask reveal (left → right) and fade reveal.
+   Uses a keyframe animation (not a transition) so the reveal can be replayed
+   — e.g. when the Header h3 pageTitle changes between work pages. */
+.preload-mask {
+    clip-path: inset(0 100% 0 0);
+    -webkit-clip-path: inset(0 100% 0 0);
+    will-change: clip-path;
+}
+.preload-mask.is-revealed {
+    animation: preload-mask-reveal 0.6s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+}
+@keyframes preload-mask-reveal {
+    from {
+        clip-path: inset(0 100% 0 0);
+        -webkit-clip-path: inset(0 100% 0 0);
+    }
+    to {
+        clip-path: inset(0 0 0 0);
+        -webkit-clip-path: inset(0 0 0 0);
+    }
+}
+
+/* Page title: enter left→right, leave right→left */
+.page-title-enter-active,
+.page-title-leave-active {
+    transition: clip-path 0.6s cubic-bezier(0.7, 0, 0.3, 1);
+    will-change: clip-path;
+}
+.page-title-enter-from,
+.page-title-leave-to {
+    clip-path: inset(0 100% 0 0);
+    -webkit-clip-path: inset(0 100% 0 0);
+}
+.page-title-enter-to,
+.page-title-leave-from {
+    clip-path: inset(0 0 0 0);
+    -webkit-clip-path: inset(0 0 0 0);
+}
+
+.preload-fade {
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    will-change: opacity;
+}
+.preload-fade.is-revealed {
+    opacity: 1;
+}

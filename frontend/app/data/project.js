@@ -16,6 +16,11 @@ export const getProjectBySlug = async projectSlug => {
       description,
       pictures[] {
         ${imageQuery}
+      },
+      marmosetFile {
+        asset-> {
+          url
+        }
       }
     }`
     const key = `work-${projectSlug}`

@@ -3,6 +3,7 @@
         <!-- Counter / index in the corner -->
         <div
             class="pointer-events-none fixed bottom-2 left-2 z-20 uppercase text-sm tracking-wide select-none"
+            :class="{ 'preload-fade': preloadActive, 'is-revealed': preloadStep >= 5 }"
         >
             <span class="text-white/40">Index</span>
             <span class="text-white/40 mx-1">/</span>
@@ -18,6 +19,7 @@
         <!-- Scroll hint -->
         <div
             class="pointer-events-none fixed bottom-2 left-1/2 -translate-x-1/2 z-20 uppercase text-sm text-white/60 select-none"
+            :class="{ 'preload-fade': preloadActive, 'is-revealed': preloadStep >= 5 }"
         >
             <span class="inline-block animate-pulse">Scroll → Drag → Click</span>
         </div>
@@ -26,7 +28,12 @@
         <section
             ref="galleryEl"
             class="home-gallery relative w-full h-full overflow-x-auto overflow-y-hidden flex items-center"
-            :class="{ 'is-dragging': isDragging }"
+            :class="{
+                'is-dragging': isDragging,
+                'preload-fade': preloadActive,
+                'is-revealed': preloadStep >= 5,
+                'is-preloaded': preloadActive && preloadStep >= 5,
+            }"
             @wheel="onWheel"
             @scroll.passive="onScroll"
             @pointerdown="onPointerDown"
@@ -108,6 +115,7 @@
         <!-- Active project name (overlay, big and bold) -->
         <div
             class="pointer-events-none fixed top-1/2 right-2 -translate-y-1/2 z-10 hidden md:block"
+            :class="{ 'preload-fade': preloadActive, 'is-revealed': preloadStep >= 6 }"
         >
             <h3
                 key="active-title"
@@ -144,6 +152,16 @@ useSeoObject(homeData?.value?.seo, homeData?.value?.title)
 
 const pageTitle = useState('page-title')
 pageTitle.value = ''
+
+// Home preload sequence — only runs when home is the initial page load
+// (SSR/prerender flips `preloadActive` on; client-side navigation back to
+// home does not, so the intro doesn't replay).
+const preloadStep = useState('home-preload-step', () => 99)
+const preloadActive = useState('home-preload-active', () => false)
+if (import.meta.server) {
+    preloadActive.value = true
+    preloadStep.value = 0
+}
 
 // --- Gallery refs / state ---
 const galleryEl = ref(null)
@@ -318,7 +336,30 @@ const onScroll = () => {
     })
 }
 
+const preloadTimers = []
+const schedulePreloadStep = (step, delay) => {
+    preloadTimers.push(setTimeout(() => (preloadStep.value = step), delay))
+}
+
 onMounted(() => {
+    if (preloadActive.value) {
+        // Mask reveal (left → right) on Header h1, h2, h3 and Footer Info button…
+        schedulePreloadStep(1, 500)
+        schedulePreloadStep(2, 750)
+        schedulePreloadStep(3, 1000)
+        schedulePreloadStep(4, 1250)
+        // …then fade in gallery (cards stagger via .is-preloaded) and active title
+        schedulePreloadStep(5, 1600)
+        schedulePreloadStep(6, 2200)
+        // Mark preload complete after the last reveal animation finishes
+        preloadTimers.push(
+            setTimeout(() => {
+                preloadActive.value = false
+                preloadStep.value = 99
+            }, 2800),
+        )
+    }
+
     nextTick(() => {
         targetX = galleryEl.value?.scrollLeft || 0
         onScroll()
@@ -329,6 +370,11 @@ onBeforeUnmount(() => {
     if (lerpRaf) cancelAnimationFrame(lerpRaf)
     if (scrollRaf) cancelAnimationFrame(scrollRaf)
     if (wheelIdleTimer) clearTimeout(wheelIdleTimer)
+    preloadTimers.forEach(clearTimeout)
+    // If the user navigated away mid-sequence, end the preload immediately
+    // so Header/Footer aren't stuck masked and the intro doesn't resume.
+    preloadActive.value = false
+    preloadStep.value = 99
 })
 
 // --- Shared element morph on click ---
@@ -380,19 +426,19 @@ const onCardClick = async (e, slug) => {
     writing-mode: vertical-rl;
 }
 
-/* Stagger reveal */
-.home-card {
+/* Stagger reveal — held until preload reveals the gallery */
+.home-gallery.is-preloaded .home-card {
     opacity: 0;
     transform: translateY(8px);
     animation: card-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-.home-card:nth-child(1) { animation-delay: 0.05s; }
-.home-card:nth-child(2) { animation-delay: 0.12s; }
-.home-card:nth-child(3) { animation-delay: 0.19s; }
-.home-card:nth-child(4) { animation-delay: 0.26s; }
-.home-card:nth-child(5) { animation-delay: 0.33s; }
-.home-card:nth-child(6) { animation-delay: 0.40s; }
-.home-card:nth-child(n + 7) { animation-delay: 0.47s; }
+.home-gallery.is-preloaded .home-card:nth-child(1) { animation-delay: 0.05s; }
+.home-gallery.is-preloaded .home-card:nth-child(2) { animation-delay: 0.12s; }
+.home-gallery.is-preloaded .home-card:nth-child(3) { animation-delay: 0.19s; }
+.home-gallery.is-preloaded .home-card:nth-child(4) { animation-delay: 0.26s; }
+.home-gallery.is-preloaded .home-card:nth-child(5) { animation-delay: 0.33s; }
+.home-gallery.is-preloaded .home-card:nth-child(6) { animation-delay: 0.40s; }
+.home-gallery.is-preloaded .home-card:nth-child(n + 7) { animation-delay: 0.47s; }
 
 @keyframes card-in {
     to {

@@ -1,8 +1,9 @@
 <template>
-    <footer id="footer" class="z-[70] pointer-events-none">
+    <footer id="footer" class="z-70 pointer-events-none">
         <button
             @click="togglePopup"
-            class="p-2 fixed top-0 right-0 z-10 uppercase cursor-pointer pointer-events-auto"
+            class="px-1 fixed top-2 right-2 z-10 uppercase cursor-pointer pointer-events-auto font-secondary text-md text-black bg-white"
+            :class="{ 'preload-mask': preloadActive, 'is-revealed': preloadStep >= 4 }"
         >
             {{ isPopupOpen ? 'Close' : 'Info' }}
         </button>
@@ -68,6 +69,9 @@ const props = defineProps({
     legalLinks: Array,
     credits: Array,
 })
+
+const preloadStep = useState('home-preload-step', () => 99)
+const preloadActive = useState('home-preload-active', () => false)
 
 let isPopupOpen = ref(false)
 
