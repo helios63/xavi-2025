@@ -9,7 +9,6 @@ export default defineNuxtConfig({
     sitemap: {
         exclude: [],
     },
-    dev: isDev,
     devtools: { enabled: isDev },
     css: ['@/assets/styles/global.css'],
     /* TODO: Refactor to use the new preview mode for Nuxt 3 to improve consistency (so we can have server rendering for both previews and production) */

@@ -89,7 +89,7 @@
                         <span
                             >{{ String(index + 1).padStart(2, '0') }} /
                             {{
-                                String(projectData.pictures.length).padStart(
+                                String(projectData?.pictures?.length ?? 0).padStart(
                                     2,
                                     '0',
                                 )

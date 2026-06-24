@@ -1,6 +1,6 @@
 <template></template>
 <script setup>
-import useCookieConsent from '~/composables/cookieConsent'
+import useCookieConsent from '~/composables/consent'
 const props = defineProps({
     cookiesPolicyLink: {
         type: String,
