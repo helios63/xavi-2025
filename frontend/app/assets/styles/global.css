@@ -279,3 +279,19 @@ button.chip:hover,
 .link-slide.router-link-active {
     text-decoration-color: currentColor;
 }
+
+/* Game: a quick pixel shake on whatever just took a hit */
+.hit-shake {
+    animation: hit-shake 0.32s steps(8, end);
+}
+@keyframes hit-shake {
+    20% { translate: -10px 0; }
+    40% { translate: 8px 0; }
+    60% { translate: -6px 0; }
+    80% { translate: 4px 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .hit-shake {
+        animation: none;
+    }
+}

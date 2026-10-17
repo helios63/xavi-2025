@@ -185,6 +185,13 @@ const nextProject = computed(() => {
     return list[(idx + 1) % list.length]
 })
 
+const game = useGameStore()
+onMounted(() => {
+    game.hydrate()
+    game.setTotal(allProjects?.value?.length || 0)
+    game.visitProject(route.params.id)
+})
+
 const prevProject = computed(() => {
     const list = allProjects?.value || []
     const idx = list.findIndex(p => p?.slug?.current === route.params.id)

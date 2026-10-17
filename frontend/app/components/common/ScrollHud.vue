@@ -41,6 +41,7 @@ const update = () => {
         const r = el.getBoundingClientRect()
         if (r.top <= mid && r.bottom >= mid) current = el.dataset.section
     })
+    if (percent.value >= 99 && max > 200) useGameStore().complete('end')
     if (current) section.value = labels[current] || current
 }
 const onScroll = () => {

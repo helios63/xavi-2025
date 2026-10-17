@@ -8,7 +8,7 @@
         />
 
         <!-- Signature move: the name travels edge to edge between hero and work -->
-        <div class="marquee overflow-hidden py-[6vh]" aria-hidden="true">
+        <div class="marquee overflow-hidden py-[6vh]" data-damage="5" aria-hidden="true">
             <div class="marquee-track">
                 <div v-for="n in 2" :key="n" class="flex shrink-0">
                     <span
@@ -116,6 +116,9 @@ useSeoObject(homeData?.value?.seo, homeData?.value?.title)
 
 const pageTitle = useState('page-title')
 pageTitle.value = ''
+
+const game = useGameStore()
+onMounted(() => game.setTotal(projectsData?.value?.length || 0))
 
 const activeSlug = ref(null)
 

@@ -24,6 +24,7 @@
 
         <!-- HUD layer -->
         <ClientOnly>
+            <CommonGameLayer />
             <CommonScrollHud />
             <CommonCursorHud />
         </ClientOnly>

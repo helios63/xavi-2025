@@ -31,6 +31,8 @@
         <h1
             v-fit
             data-fit-max-vh="34"
+            data-damage="10"
+            data-boss
             :aria-label="`${first} ${rest}`"
             class="monument font-display text-[14vw] uppercase"
             @fit="onFit"

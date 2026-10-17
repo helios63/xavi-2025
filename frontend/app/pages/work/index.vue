@@ -85,6 +85,9 @@ import { getProjects } from '@/data/projects'
 import { getProjectsArchiveMeta } from '@/data/projectsArchiveMeta'
 const MODES = ['Grid', 'List']
 const view = ref('Grid')
+const game = useGameStore()
+watch(view, v => v === 'List' && game.complete('list'))
+onMounted(() => game.setTotal(projectsData?.value?.length || 0))
 const route = useRoute()
 const path = route.path
 
