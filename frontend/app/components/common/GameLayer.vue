@@ -36,7 +36,7 @@
                 </ul>
                 <p class="hud mt-4 text-(--ink-soft)">Careful: some things bite back.</p>
                 <div v-if="game.rewardUnlocked" class="mt-3 flex gap-2">
-                    <button class="hud chip chip-red notch" @click="game.rewardOpen = true">Open gift</button>
+                    <button class="hud chip chip-red notch" @click="game.rewardOpen = true">Replay</button>
                     <button class="hud chip notch" @click="game.reset()">Reset</button>
                 </div>
             </div>
@@ -64,49 +64,97 @@
             </div>
         </div>
 
-        <!-- Gift -->
-        <div
-            v-if="game.rewardOpen"
-            class="fixed inset-0 z-[70] grid place-items-center bg-black/85 px-(--margin)"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="gift-title"
-        >
-            <span
-                v-for="n in 28"
-                :key="n"
-                class="burst-px pointer-events-none"
-                :style="burstStyle(n)"
-                aria-hidden="true"
-            />
-            <div class="notch relative w-full max-w-[520px] bg-white p-8 text-black">
-                <p class="hud mb-4 flex items-center gap-2"><span class="dot text-red" />Quest log complete</p>
-                <h2 id="gift-title" class="font-display text-[clamp(36px,6vw,64px)] uppercase leading-none">
-                    {{ REWARD.title }}
-                </h2>
-                <p class="mt-5 text-md">{{ REWARD.description }}</p>
-                <button class="btn mt-8" data-cursor="Close" @click="game.rewardOpen = false">Close</button>
+        <!-- Finale: sprites fill and cover the whole page while the message stays on top -->
+        <div v-if="game.rewardOpen" class="finale fixed inset-0 z-[70]" :style="{ '--cover': cover }">
+            <div class="finale-grid absolute inset-0 grid" :style="gridStyle" aria-hidden="true">
+                <span v-for="(cell, i) in cells" :key="i" class="finale-cell" :class="{ 'is-on': cell.order < shown }">
+                    <img :src="cell.src" alt="" draggable="false" />
+                </span>
+            </div>
+
+            <div
+                class="notch absolute left-1/2 top-[max(16px,env(safe-area-inset-top))] z-10 flex w-[min(560px,calc(100vw-32px))] -translate-x-1/2 items-center justify-between gap-4 bg-white py-4 pl-6 pr-4 text-black"
+                role="dialog"
+                aria-labelledby="finale-title"
+            >
+                <p id="finale-title" class="text-[clamp(17px,2.4vw,22px)] font-medium leading-tight">
+                    Vous avez terminé les quêtes ! Bravo !
+                </p>
+                <button
+                    class="grid size-11 shrink-0 place-items-center bg-red text-black transition-transform duration-200 hover:scale-105 active:scale-95"
+                    aria-label="Fermer"
+                    data-cursor="Fermer"
+                    @click="game.rewardOpen = false"
+                >
+                    <svg viewBox="0 0 7 7" width="18" height="18" shape-rendering="crispEdges" aria-hidden="true">
+                        <path fill="currentColor" d="M0 0h2v1h1v1h1V1h1V0h2v2H6v1H5v1h1v1h1v2H5V6H4V5H3v1H2v1H0V5h1V4h1V3H1V2H0z" />
+                    </svg>
+                </button>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { REWARD } from '@/utils/reward'
-
 const game = useGameStore()
 const route = useRoute()
 const open = ref(false)
 
-const burstStyle = n => {
-    const a = (n / 28) * Math.PI * 2
-    const d = 160 + ((n * 37) % 120)
-    return {
-        '--dx': `${Math.cos(a) * d}px`,
-        '--dy': `${Math.sin(a) * d}px`,
-        background: n % 3 === 0 ? 'var(--color-white)' : 'var(--color-red)',
+// --- Finale ---------------------------------------------------------------
+const SPRITES = ['/sprites/chun-walk.webp', '/sprites/chun-red.webp', '/sprites/mai-fan.webp']
+const cells = ref([])
+const shown = ref(0)
+const cols = ref(1)
+let fillRaf = null
+
+const cover = computed(() => (cells.value.length ? Math.min(1, shown.value / cells.value.length) : 0))
+const gridStyle = computed(() => ({
+    gridTemplateColumns: `repeat(${cols.value}, 1fr)`,
+    gridAutoRows: '1fr',
+}))
+
+const startFinale = () => {
+    const size = window.innerWidth < 768 ? 88 : 132
+    cols.value = Math.ceil(window.innerWidth / size)
+    const rows = Math.ceil(window.innerHeight / size)
+    const total = cols.value * rows
+    // random sprite per cell, appearing in a shuffled order
+    const order = Array.from({ length: total }, (_, i) => i)
+    for (let i = total - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1))
+        ;[order[i], order[j]] = [order[j], order[i]]
     }
+    cells.value = order.map(o => ({
+        src: SPRITES[Math.floor(Math.random() * SPRITES.length)],
+        order: o,
+    }))
+    shown.value = 0
+    document.body.style.overflow = 'hidden'
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        shown.value = total
+        return
+    }
+    const DURATION = 6500
+    const t0 = performance.now()
+    const step = now => {
+        const t = Math.min(1, (now - t0) / DURATION)
+        shown.value = Math.min(total, Math.ceil(total * t * t)) // slow start, fast finish
+        if (t < 1) fillRaf = requestAnimationFrame(step)
+        else shown.value = total
+    }
+    fillRaf = requestAnimationFrame(step)
 }
+const stopFinale = () => {
+    if (fillRaf) cancelAnimationFrame(fillRaf)
+    fillRaf = null
+    document.body.style.overflow = ''
+}
+watch(
+    () => game.rewardOpen,
+    open => (open ? nextTick(startFinale) : stopFinale()),
+)
+onBeforeUnmount(stopFinale)
 
 // Clicks on anything marked data-damage="N" cost life; data-boss also counts as a hit.
 const onClick = e => {
@@ -154,26 +202,34 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
         opacity: 0;
     }
 }
-.burst-px {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    width: 10px;
-    height: 10px;
-    animation: burst 1.1s var(--ease-out-expo) forwards;
+.finale {
+    background: color-mix(in srgb, var(--color-black) calc(var(--cover) * 100%), transparent);
 }
-@keyframes burst {
+.finale-cell {
+    display: grid;
+    place-items: center;
+    background: var(--color-black);
+    visibility: hidden;
+}
+.finale-cell.is-on {
+    visibility: visible;
+    animation: cell-pop 0.35s steps(4, end) both;
+}
+.finale-cell img {
+    width: 88%;
+    height: 88%;
+    object-fit: contain;
+    image-rendering: pixelated;
+    user-select: none;
+}
+@keyframes cell-pop {
     from {
-        transform: translate(-50%, -50%);
-    }
-    to {
-        transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy)));
-        opacity: 0;
+        transform: scale(0);
     }
 }
 @media (prefers-reduced-motion: reduce) {
     .floater,
-    .burst-px,
+    .finale-cell,
     .ko {
         animation: none;
     }
