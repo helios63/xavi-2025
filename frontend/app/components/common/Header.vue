@@ -3,14 +3,14 @@
     <header id="header" ref="header" class="fixed top-0 left-0 z-30 w-full bg-black text-white">
         <nav
             id="main-nav"
-            class="flex items-start justify-between gap-6 px-(--margin) py-4 leading-none"
+            class="flex items-center justify-between gap-3 px-(--margin) py-3 leading-none md:items-start md:gap-6 md:py-4"
         >
-            <NuxtLink to="/" class="flex flex-col gap-2" data-cursor="Home">
-                <span class="font-display text-[22px] uppercase">{{ siteName }}</span>
-                <span class="hud text-(--ink-soft)">3D Character Artist</span>
+            <NuxtLink to="/" class="flex flex-col" data-cursor="Home">
+                <span class="font-display text-[17px] uppercase sm:text-[24px]">{{ siteName }}</span>
+                <span class="hud hidden text-(--ink-soft) leading-none sm:block">3D Character Artist</span>
             </NuxtLink>
 
-            <div class="flex items-center gap-x-6">
+            <div class="flex items-center gap-x-3 sm:gap-x-6">
                 <!-- RPG-style life bar, driven by the game store -->
                 <div
                     class="hp flex items-center gap-3"
@@ -43,6 +43,7 @@
                 />
                 <a href="#contact" class="hud chip chip-red notch" @click="onContactClick">Contact</a>
                 <button
+                    v-if="navItems && navItems.length"
                     @click="toggleMenuState"
                     class="chip notch h-[30px] w-[34px] justify-center md:hidden!"
                     aria-label="Toggle nav menu"
@@ -142,6 +143,19 @@ onBeforeMount(() => {
 .hp-seg.is-off {
     background: color-mix(in srgb, var(--color-white) 14%, transparent);
     transition: background-color 0.2s steps(2, end);
+}
+@media (max-width: 639px) {
+    .hp-bar {
+        gap: 2px;
+        padding: 2px;
+    }
+    .hp-seg {
+        width: 6px !important;
+        height: 12px !important;
+    }
+    .hp {
+        gap: 8px;
+    }
 }
 .hp-seg {
     width: 9px;

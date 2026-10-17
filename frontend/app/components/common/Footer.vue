@@ -37,7 +37,7 @@
             <div v-reveal class="flex flex-col gap-3">
                 <div
                     v-if="contact?.address"
-                    class="not-italic whitespace-pre-line"
+                    class="not-italic whitespace-pre-line md:columns-3"
                     v-html="contact.address"
                 />
                 <ul class="flex flex-wrap gap-x-6 gap-y-1 text-sm">

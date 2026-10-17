@@ -2,11 +2,11 @@
     <div aria-live="polite">
         <!-- Quest log, fixed under the HP bar -->
         <aside
-            class="quest-log fixed right-(--margin) top-[78px] z-30 w-[min(300px,calc(100vw-2*var(--margin)))] bg-black text-white notch"
-            :class="{ 'is-open': open }"
+            class="quest-log fixed right-(--margin) top-[54px] z-30 bg-black text-white notch md:top-[78px]"
+            :class="open ? 'w-[min(300px,calc(100vw-2*var(--margin)))]' : 'w-fit'"
         >
             <button
-                class="hud flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left"
+                class="hud flex w-full items-center justify-between gap-3 px-3 py-3 text-left md:py-2.5"
                 :aria-expanded="open"
                 aria-controls="quest-list"
                 data-cursor="Quests"

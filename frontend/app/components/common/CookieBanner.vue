@@ -287,7 +287,7 @@ body #cc-main .cm [data-cc='c-settings'] {
 } */
 #cc-main .cm--cloud .cm__body {
     @apply !p-[16px] gap-[16px];
-    border-top: 1px solid #ffffff;
+    border-top: 3px solid var(--color-red);
 }
 
 body #cc-main .cm--cloud .cm__desc {
@@ -303,10 +303,43 @@ body #cc-main .cm--cloud .cm__btns {
 }
 
 body #cc-main .cm-wrapper .cm__btn-group button {
-    @apply flex items-center my-auto py-[10px] px-[20px] min-w-[124px] border border-white border-solid text-center justify-center rounded-full leading-none min-h-0 h-fit !m-auto;
+    @apply flex items-center my-auto py-[10px] px-[20px] min-w-0 flex-1 md:flex-none md:min-w-[124px] text-center justify-center leading-none min-h-0 h-fit !m-auto;
 }
 
-body #cc-main .cm__btn-group button:hover {
-    @apply text-white bg-black;
+/* Pixel-notched buttons, same silhouette as the rest of the UI */
+body #cc-main .cm-wrapper .cm__btn-group button {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border: 0;
+    clip-path: polygon(
+        0 4px, 4px 4px, 4px 0,
+        calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px,
+        100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%,
+        4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px)
+    );
+}
+body #cc-main .cm-wrapper .cm__btn-group button[data-role='all'] {
+    background: var(--color-red);
+    color: var(--color-black);
+}
+body #cc-main .cm-wrapper .cm__btn-group button[data-role='necessary'] {
+    background: color-mix(in srgb, var(--color-white) 14%, transparent);
+    color: var(--color-white);
+}
+body #cc-main .cm-wrapper .cm__btn-group button:hover {
+    background: var(--color-white);
+    color: var(--color-black);
+}
+@media (max-width: 767px) {
+    body #cc-main .cm__desc {
+        font-size: 13px;
+        line-height: 1.4;
+    }
+    #cc-main .cm--cloud .cm__body {
+        padding: 12px !important;
+        gap: 12px !important;
+    }
 }
 </style>

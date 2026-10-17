@@ -2,9 +2,9 @@
     <section
         ref="root"
         data-section="hero"
-        class="hero relative flex min-h-svh flex-col justify-end overflow-x-clip px-(--margin) pb-[2.5vh] pt-28"
+        class="hero relative flex min-h-svh flex-col max-lg:justify-start lg:justify-end overflow-x-clip px-(--margin) pb-[2.5vh] pt-28"
     >
-        <div class="mb-[4vh] flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <div class="mb-[4vh] flex flex-col gap-6 max-lg:mt-10 max-lg:mb-0 md:flex-row md:items-end md:justify-between">
             <div class="flex flex-col gap-6">
                 <p v-reveal="3" class="max-w-[30ch] text-md">
                     Characters built from the first polygon to the final render.
@@ -15,7 +15,7 @@
                 </ul>
             </div>
             <div v-reveal="5" class="flex flex-col items-start gap-4 md:items-end">
-                <span class="hud chip notch text-(--ink-soft)">
+                <span class="hud chip notch text-(--ink-soft) max-md:hidden!">
                     <span class="dot text-red" />{{ projectCount }} selected projects
                 </span>
                 <a href="#work" class="btn" data-cursor="Scroll" @click.prevent="scrollToWork">
@@ -30,6 +30,7 @@
              idea as the project images). -->
         <h1
             v-fit
+            :class="'max-lg:order-first'"
             data-fit-max-vh="34"
             data-damage="10"
             data-boss
