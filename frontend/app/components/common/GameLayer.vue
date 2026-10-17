@@ -72,6 +72,13 @@
                 </span>
             </div>
 
+            <p
+                class="notch absolute bottom-[max(12px,env(safe-area-inset-bottom))] left-1/2 z-10 w-[min(640px,calc(100vw-32px))] -translate-x-1/2 bg-black px-4 py-3 text-center text-[13px] leading-snug text-white"
+            >
+                Chun-Li © CAPCOM · Mai Shiranui © SNK. Sprite animations are fan pixel art; all rights belong to
+                their respective owners.
+            </p>
+
             <div
                 class="notch absolute left-1/2 top-[max(16px,env(safe-area-inset-top))] z-10 flex w-[min(560px,calc(100vw-32px))] -translate-x-1/2 items-center justify-between gap-4 bg-white py-4 pl-6 pr-4 text-black"
                 role="dialog"

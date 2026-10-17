@@ -55,6 +55,10 @@
                 <div class="text-sm opacity-70 max-w-[60ch] md:ml-auto">
                     <CommonTextContent :blocks="credits" />
                 </div>
+                <p class="text-sm opacity-70 max-w-[60ch] md:ml-auto">
+                    Game sprites: Chun-Li © CAPCOM, Mai Shiranui © SNK. Fan pixel art; all rights belong to their
+                    respective owners.
+                </p>
             </div>
         </div>
     </footer>
