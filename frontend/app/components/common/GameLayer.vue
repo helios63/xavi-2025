@@ -78,12 +78,12 @@
                 aria-labelledby="finale-title"
             >
                 <p id="finale-title" class="text-[clamp(17px,2.4vw,22px)] font-medium leading-tight">
-                    Vous avez terminé les quêtes ! Bravo !
+                    You completed all the quests! Congrats!
                 </p>
                 <button
                     class="grid size-11 shrink-0 place-items-center bg-red text-black transition-transform duration-200 hover:scale-105 active:scale-95"
-                    aria-label="Fermer"
-                    data-cursor="Fermer"
+                    aria-label="Close"
+                    data-cursor="Close"
                     @click="game.rewardOpen = false"
                 >
                     <svg viewBox="0 0 7 7" width="18" height="18" shape-rendering="crispEdges" aria-hidden="true">
