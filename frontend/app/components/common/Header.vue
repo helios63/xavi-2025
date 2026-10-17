@@ -3,7 +3,7 @@
     <header id="header" ref="header" class="fixed top-0 left-0 z-30 w-full bg-black text-white">
         <nav
             id="main-nav"
-            class="flex items-center justify-between gap-3 px-(--margin) py-3 leading-none md:items-start md:gap-6 md:py-4"
+            class="flex items-center justify-between gap-3 px-(--margin) py-2.5 leading-none md:items-start md:gap-6 md:py-4"
         >
             <NuxtLink to="/" class="flex flex-col" data-cursor="Home">
                 <span class="font-display text-[17px] uppercase sm:text-[24px]">{{ siteName }}</span>

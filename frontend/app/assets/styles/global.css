@@ -36,7 +36,7 @@
 }
 
 :root {
-    --margin: clamp(16px, 2vw, 32px);
+    --margin: clamp(14px, 1.8vw, 32px);
     --ink-soft: color-mix(in srgb, var(--color-white) 62%, transparent);
 }
 

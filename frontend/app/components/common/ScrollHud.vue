@@ -4,7 +4,7 @@
         class="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex items-end justify-between px-(--margin) pb-4 max-md:pb-3"
         aria-hidden="true"
     >
-        <div class="hud notch flex items-center gap-3 bg-black px-3 py-2.5 text-white">
+        <div class="hud notch flex items-center gap-3 bg-black px-3 py-2.5 text-white max-md:[clip-path:none]">
             <span class="flex gap-[3px]">
                 <span
                     v-for="n in SEGMENTS"
