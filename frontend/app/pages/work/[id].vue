@@ -25,7 +25,7 @@
                 <CommonMediaImage
                     class="block h-auto w-auto max-w-full md:max-w-[72vw]"
                     :image="projectData?.featuredImage"
-                    :alt="projectData?.title"
+                    :alt="`${projectData?.title} — 3D character by Xavi Noguera`"
                     width="1800"
                     mobileWidth="900"
                     loading="eager"
@@ -61,7 +61,7 @@
                     <div class="frame">
                     <CommonMediaPixelImage
                         :image="picture"
-                        :alt="projectData?.title"
+                        :alt="`${projectData?.title} — 3D character artwork, view ${index + 1} of ${projectData.pictures.length}`"
                         width="2200"
                         mobileWidth="1100"
                     />
@@ -117,7 +117,7 @@
 
 <script setup>
 import { buildBodyClass } from '@/utils'
-import { useSeoObject } from '@/composables/seo'
+import { useSeoObject, toMetaDescription } from '@/composables/seo'
 import { getProjectBySlug } from '@/data/project'
 import { getProjects } from '@/data/projects'
 
@@ -143,10 +143,46 @@ useHead({
         class: bodyClass,
     },
 })
+const projectName = projectData?.value?.title
+const baseDescription = toMetaDescription(projectData?.value?.description, 120)
+
 useSeoObject(
     projectData?.value?.seo,
-    projectData?.value?.title,
+    `${projectName} — 3D Character | Xavi Noguera`,
     projectData?.value?.featuredImage,
+    {
+        type: 'article',
+        description: toMetaDescription(
+            `${baseDescription}${/[.…!?]$/.test(baseDescription) ? '' : '.'} 3D character art by Xavi Noguera.`.trim(),
+            200,
+        ),
+        jsonLd: (url, siteUrl) => ({
+            '@context': 'https://schema.org',
+            '@graph': [
+                {
+                    '@type': 'CreativeWork',
+                    '@id': `${url}#work`,
+                    name: projectName,
+                    description: projectData?.value?.description,
+                    url,
+                    image: [projectData?.value?.featuredImage, ...(projectData?.value?.pictures || [])]
+                        .map(i => i?.asset?.url)
+                        .filter(Boolean),
+                    dateCreated: projectData?.value?.date || undefined,
+                    creator: { '@type': 'Person', '@id': `${siteUrl}/#person`, name: 'Xavi Noguera' },
+                    genre: '3D character art',
+                },
+                {
+                    '@type': 'BreadcrumbList',
+                    itemListElement: [
+                        { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteUrl}/` },
+                        { '@type': 'ListItem', position: 2, name: 'Work', item: `${siteUrl}/work/` },
+                        { '@type': 'ListItem', position: 3, name: projectName, item: url },
+                    ],
+                },
+            ],
+        }),
+    },
 )
 
 const marmosetUrl = computed(() => projectData?.value?.marmosetFile?.asset?.url ?? null)

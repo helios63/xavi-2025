@@ -31,6 +31,11 @@
                 </div>
             </div>
 
+            <p v-reveal class="mt-8 max-w-[60ch] text-md text-(--ink-soft)">
+                Stylized 3D characters for games — {{ workList }}. Each project walks through the full pipeline,
+                from sculpt to final render.
+            </p>
+
             <ul class="mt-[10vh] flex flex-col gap-[72px] md:gap-0">
                 <li
                     v-for="(project, index) in projectsData"
@@ -112,7 +117,51 @@ useHead({
     },
 })
 
-useSeoObject(homeData?.value?.seo, homeData?.value?.title)
+const socialLinks = (siteSettingsData?.value?.socialLinks || []).map(l => l?.url).filter(Boolean)
+
+useSeoObject(
+    homeData?.value?.seo,
+    'Xavi Noguera — 3D Character Artist, Portfolio',
+    projectsData?.value?.[0]?.featuredImage,
+    {
+        description:
+            'Portfolio of Xavi Noguera, 3D Character Artist. Stylized game characters sculpted in ZBrush, textured in Substance Painter and rendered in Marmoset Toolbag, from Gameloft and Room 8 Studio to the indie game Bennevine.',
+        jsonLd: (url, siteUrl) => ({
+            '@context': 'https://schema.org',
+            '@graph': [
+                {
+                    '@type': 'WebSite',
+                    '@id': `${siteUrl}/#website`,
+                    url,
+                    name: 'Xavi Noguera',
+                    inLanguage: 'en',
+                    publisher: { '@id': `${siteUrl}/#person` },
+                },
+                {
+                    '@type': 'Person',
+                    '@id': `${siteUrl}/#person`,
+                    name: 'Xavi Noguera',
+                    url,
+                    jobTitle: '3D Character Artist',
+                    image: projectsData?.value?.[0]?.featuredImage?.asset?.url,
+                    email: siteSettingsData?.value?.contact?.email,
+                    sameAs: socialLinks,
+                    knowsAbout: [
+                        '3D character art',
+                        'Stylized characters',
+                        'ZBrush',
+                        'Maya',
+                        'Substance Painter',
+                        'Marmoset Toolbag',
+                    ],
+                    worksFor: [
+                        { '@type': 'Organization', name: 'Room 8 Studio' },
+                    ],
+                },
+            ],
+        }),
+    },
+)
 
 const pageTitle = useState('page-title')
 pageTitle.value = ''
@@ -121,6 +170,11 @@ const game = useGameStore()
 onMounted(() => game.setTotal(projectsData?.value?.length || 0))
 
 const activeSlug = ref(null)
+
+const workList = computed(() => {
+    const titles = (projectsData?.value || []).map(p => p?.title).filter(Boolean)
+    return titles.length > 1 ? `${titles.slice(0, -1).join(', ')} and ${titles.at(-1)}` : titles[0] || ''
+})
 
 const getYear = dateStr => (dateStr ? new Date(dateStr).getFullYear() : '')
 

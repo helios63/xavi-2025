@@ -26,5 +26,10 @@ useHead({
     },
 })
 
-useSeoObject(pageData?.value?.seo, pageData?.value?.title)
+useSeoObject(
+    pageData?.value?.seo,
+    `${pageData?.value?.title} | Xavi Noguera`,
+    null,
+    { description: `${pageData?.value?.title} for the portfolio website of Xavi Noguera, 3D Character Artist.` },
+)
 </script>

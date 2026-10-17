@@ -4,10 +4,10 @@
             id="main-content"
             class="relative min-h-svh flex flex-col items-center justify-center text-center"
         >
-            <h2
+            <h1
                 class="p-4 uppercase"
                 v-html="error?.statusCode == '404' ? text404 : defaultText"
-            ></h2>
+            ></h1>
             <DevOnly>
                 {{ error }}
             </DevOnly>
@@ -23,8 +23,9 @@ const metaTitle = props.error?.statusCode == '404' ? '404 - Page not found' : 'S
 
 const defaultText = 'Sorry, something went wrong.<br>Please try again later'
 const text404 =
-    '404<br>The page could not be found<br>Please visit our <a href="/" class="text-blue">homepage to start fresh</a>'
+    '404<br>The page could not be found<br>Back to the <a href="/" class="underline">portfolio homepage</a> or browse <a href="/work/" class="underline">all work</a>'
 useHead({
     title: metaTitle,
+    meta: [{ name: 'robots', content: 'noindex, follow' }],
 })
 </script>

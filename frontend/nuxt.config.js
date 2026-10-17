@@ -6,8 +6,22 @@ const isProduction = process.env.APP_ENV == 'production'
 const isPreview = process.env.APP_ENV == 'preview'
 
 export default defineNuxtConfig({
+    site: {
+        url: process.env.NUXT_PUBLIC_SITE_URL,
+        name: 'Xavi Noguera',
+        defaultLocale: 'en',
+        trailingSlash: true,
+    },
     sitemap: {
-        exclude: [],
+        sources: ['/api/__sitemap__/urls'],
+    },
+    // Self-hosted fonts (replaces the render-blocking Google Fonts @import)
+    fonts: {
+        families: [
+            { name: 'Pixelify Sans', provider: 'google', weights: ['400 700'] },
+            { name: 'Space Grotesk', provider: 'google', weights: [400, 500, 600] },
+            { name: 'JetBrains Mono', provider: 'google', weights: [400, 500] },
+        ],
     },
     devtools: { enabled: isDev },
     css: ['@/assets/styles/global.css'],
@@ -29,9 +43,13 @@ export default defineNuxtConfig({
             htmlAttrs: {
                 lang: 'en',
             },
+            meta: [
+                { name: 'theme-color', content: '#101012' },
+                { name: 'color-scheme', content: 'dark' },
+            ],
             link: [
-                // { rel: "dns-prefetch", href: "//player.vimeo.com" },
-                // { rel: "preconnect", href: "//player.vimeo.com" },
+                // All project imagery is served from the Sanity CDN
+                { rel: 'preconnect', href: 'https://cdn.sanity.io', crossorigin: '' },
             ],
         },
     },
@@ -92,9 +110,8 @@ export default defineNuxtConfig({
         '@nuxtjs/sitemap',
         // to query, fetch and display data from Sanity
         '@nuxtjs/sanity',
-        // to add custom fonts to the app from Google Fonts
-        // you need to npm i @nuxtjs/google-fonts   
-        // '@nuxtjs/google-fonts',
+        // self-hosts the Google fonts declared in `fonts` above
+        '@nuxt/fonts',
     ],
     sanity: {
         projectId: sanityId,
@@ -108,6 +125,27 @@ export default defineNuxtConfig({
             appEnv: process.env.APP_ENV,
             publicSiteUrl: process.env.NUXT_PUBLIC_SITE_URL,
         }
+    },
+    hooks: {
+        // Pages that no link points to (e.g. the cookie policy) are never crawled,
+        // so hand every published page slug to the prerenderer explicitly.
+        async 'prerender:routes'(ctx) {
+            try {
+                const { createClient } = await import('@sanity/client')
+                const client = createClient({
+                    projectId: sanityId,
+                    dataset: sanityDataset,
+                    apiVersion: sanityApiVersion,
+                    useCdn: false,
+                })
+                const slugs = await client.fetch(
+                    `*[_type == "page" && defined(slug.current) && !(_id in path("drafts.**"))].slug.current`,
+                )
+                slugs.forEach(slug => ctx.routes.add(`/${slug}/`))
+            } catch (e) {
+                console.warn('[prerender] could not list Sanity pages:', e.message)
+            }
+        },
     },
     compatibilityDate: '2024-11-07'
 })

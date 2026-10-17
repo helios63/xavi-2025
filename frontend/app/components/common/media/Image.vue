@@ -19,6 +19,8 @@
             :width="realWidth"
             :height="realHeight"
             :loading="$attrs.loading || (useLazy ? 'lazy' : 'eager')"
+            :fetchpriority="isEager ? 'high' : undefined"
+            decoding="async"
         />
     </picture>
 </template>
@@ -69,6 +71,12 @@ const props = defineProps({
         default: 'auto'
     },
 })
+
+defineOptions({ inheritAttrs: false })
+
+const attrs = useAttrs()
+// Above-the-fold images (LCP candidates) are the only eager ones
+const isEager = computed(() => (attrs.loading || (props.useLazy ? 'lazy' : 'eager')) === 'eager')
 
 const desktopImageLimitpx = 4000
 const mobileImageLimitpx = 2000

@@ -21,6 +21,10 @@
             </div>
         </div>
 
+        <p v-reveal class="mt-8 max-w-[60ch] text-md text-(--ink-soft)">
+            A selection of 3D character work for games and personal projects: {{ projectTitles.join(', ') }}.
+        </p>
+
         <!-- Grid: masonry by columns, every image keeps its own ratio, nothing is cropped -->
         <ul v-if="view === 'Grid'" class="mt-[8vh] columns-1 gap-x-8 sm:columns-2 lg:columns-3">
             <li
@@ -80,7 +84,7 @@
 
 <script setup>
 import { buildBodyClass } from '@/utils'
-import { useSeoObject } from '@/composables/seo'
+import { useSeoObject, toMetaDescription } from '@/composables/seo'
 import { getProjects } from '@/data/projects'
 import { getProjectsArchiveMeta } from '@/data/projectsArchiveMeta'
 const MODES = ['Grid', 'List']
@@ -101,5 +105,32 @@ useHead({
     },
 })
 
-useSeoObject(archiveMeta?.value?.seo, archiveMeta?.value?.title)
+const projectTitles = computed(() => (projectsData?.value || []).map(p => p?.title).filter(Boolean))
+
+useSeoObject(
+    archiveMeta?.value?.seo,
+    'Work — 3D Character Art Portfolio | Xavi Noguera',
+    projectsData?.value?.[0]?.featuredImage,
+    {
+        description: toMetaDescription(
+            `Selected 3D character art by Xavi Noguera: ${projectTitles.value.length} projects including ${projectTitles.value.slice(0, 4).join(', ')}. Stylized game characters from sculpt to final render.`,
+        ),
+        jsonLd: (url, siteUrl) => ({
+            '@context': 'https://schema.org',
+            '@type': 'CollectionPage',
+            name: 'Work — Xavi Noguera',
+            url,
+            isPartOf: { '@id': `${siteUrl}/#website` },
+            mainEntity: {
+                '@type': 'ItemList',
+                itemListElement: (projectsData?.value || []).map((p, i) => ({
+                    '@type': 'ListItem',
+                    position: i + 1,
+                    name: p?.title,
+                    url: `${siteUrl}/work/${p?.slug?.current}/`,
+                })),
+            },
+        }),
+    },
+)
 </script>
