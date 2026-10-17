@@ -10,6 +10,7 @@ export const getProjects = async () => {
       },
       slug,
       date,
+      description,
       featuredImage {
         ${imageQuery}
       },

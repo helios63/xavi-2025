@@ -1,51 +1,34 @@
 <template>
+    <!-- Plain bar: wordmark left, links and the one action right. -->
     <header
         id="header"
         ref="header"
-        class="fixed top-0 left-0 w-full uppercase z-10"
+        class="fixed top-0 left-0 w-full z-30 bg-black text-white"
     >
-        <nav id="main-nav" class="w-auto p-2 leading-none">
-            <div
-                class="flex items-center gap-x-2"
-                v-if="navItems && navItems?.length > 0"
-            >
+        <nav
+            id="main-nav"
+            class="flex items-start justify-between gap-6 px-(--margin) py-5 text-base leading-none"
+        >
+            <NuxtLink to="/" class="flex flex-col gap-1.5 font-medium">
+                <span>{{ siteName }}</span>
+                <span class="font-normal opacity-60">3D Character Artist</span>
+            </NuxtLink>
+
+            <div class="flex items-start gap-x-8">
                 <CommonHeaderPrimaryNav
+                    v-if="navItems && navItems.length"
                     :menuIsOpened="menuState.isOpened"
                     :items="navItems"
                 />
+                <a href="#contact" class="link-slide" @click="onContactClick">Contact</a>
                 <button
                     @click="toggleMenuState"
-                    class="h-[1em] md:hidden"
+                    class="h-[1.1em] md:hidden"
                     aria-label="Toggle nav menu"
                 >
                     <IconsBurger :menuIsOpened="menuState.isOpened" />
                 </button>
             </div>
-            <NuxtLink
-                to="/"
-                class="flex flex-col md:flex-row md:gap-2 transition-colors"
-                active-class="text-red"
-            >
-                <!-- <CommonHeaderBrandLogo
-                    :siteLogo="siteLogo"
-                    :siteName="siteName"
-                /> -->
-                <h1
-                    class="font-secondary uppercase text-md text-black bg-white leading-none px-1"
-                    :class="{ 'preload-mask': preloadActive, 'is-revealed': preloadStep >= 1 }"
-                >{{ siteName }}</h1>
-                <h2
-                    class="font-secondary uppercase text-md text-black bg-white leading-none px-1"
-                    :class="{ 'preload-mask': preloadActive, 'is-revealed': preloadStep >= 2 }"
-                >3D Character Artist</h2>
-                <Transition name="page-title" mode="out-in" appear>
-                    <h3
-                        v-if="preloadStep >= 3 && pageTitle"
-                        :key="pageTitle"
-                        class="font-secondary uppercase text-md text-black bg-red leading-none px-1"
-                    >{{ pageTitle }}</h3>
-                </Transition>
-            </NuxtLink>
         </nav>
     </header>
 </template>
@@ -63,23 +46,19 @@ const toggleMenuState = () => {
     menuState.isOpened = !menuState.isOpened
 }
 
+const onContactClick = () => {
+    if (window.matchMedia('(max-width: 767px)').matches) menuState.isOpened = false
+}
+
 const header = ref(null)
 
-const pageTitle = useState('page-title', () => '')
-const preloadStep = useState('home-preload-step', () => 99)
-const preloadActive = useState('home-preload-active', () => false)
-
 onBeforeMount(() => {
-    // add matchmedia to open or close menu both on load or on change
+    // open the nav on desktop, collapse it on mobile (also on resize)
     const mq = window.matchMedia('(min-width: 768px)')
     menuState.isOpened = mq.matches
 
     mq.addEventListener('change', e => {
-        if (e.matches) {
-            menuState.isOpened = true
-        } else {
-            menuState.isOpened = false
-        }
+        menuState.isOpened = e.matches
     })
 })
 </script>

@@ -16,7 +16,6 @@
         </main>
         <!-- Footer -->
         <CommonFooter
-            class="fixed top-0 right-0 w-full md:w-1/3"
             :contact="siteSettingsData?.contact"
             :socialLinks="siteSettingsData?.socialLinks"
             :legalLinks="siteSettingsData?.legalLinks"

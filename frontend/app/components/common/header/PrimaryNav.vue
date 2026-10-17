@@ -1,10 +1,10 @@
 <template>
     <ul
         ref="mainNav"
-        class="w-full flex gap-x-2 items-center"
+        class="flex flex-col md:flex-row items-end md:items-center gap-x-8 gap-y-2"
         v-show="menuIsOpened"
     >
-        <li v-for="item in items" class="flex h-full items-center">
+        <li v-for="item in items" :key="item?._key || item?.text">
             <CommonHeaderNavLink :item="item" />
         </li>
     </ul>
@@ -17,10 +17,3 @@ const props = defineProps({
 })
 const mainNav = ref(null)
 </script>
-
-<style scoped>
-@reference "../../../assets/styles/global.css";
-.current-nav-item {
-    @apply text-red;
-}
-</style>

@@ -1,129 +1,82 @@
 <template>
-    <div ref="rootEl" class="home-root relative w-screen h-dvh overflow-hidden">
-        <!-- Counter / index in the corner -->
-        <div
-            class="pointer-events-none fixed bottom-2 left-2 z-20 uppercase text-sm tracking-wide select-none"
-            :class="{ 'preload-fade': preloadActive, 'is-revealed': preloadStep >= 5 }"
-        >
-            <span class="text-white/40">Index</span>
-            <span class="text-white/40 mx-1">/</span>
-            <span class="text-white"
-                >{{ String(activeIndex + 1).padStart(2, '0') }}</span
-            >
-            <span class="text-white/40 mx-1">—</span>
-            <span class="text-white/40"
-                >{{ String(projectsData?.length || 0).padStart(2, '0') }}</span
-            >
+    <div class="home-root">
+        <HomeHero
+            :name="siteSettingsData?.siteTitle || 'Xavi Noguera'"
+            :featured="projectsData?.[0]"
+            @open="onCardClick"
+        />
+
+        <!-- Signature move: the name travels edge to edge between hero and work -->
+        <div class="marquee overflow-hidden py-[6vh]" aria-hidden="true">
+            <div class="marquee-track">
+                <div v-for="n in 2" :key="n" class="flex shrink-0">
+                    <span
+                        v-for="m in 3"
+                        :key="m"
+                        class="font-display italic whitespace-nowrap pr-[4vw] text-[11vw]"
+                    >
+                        {{ siteSettingsData?.siteTitle || 'Xavi Noguera' }} — 3D Character Artist —
+                    </span>
+                </div>
+            </div>
         </div>
 
-        <!-- Scroll hint -->
-        <div
-            class="pointer-events-none fixed bottom-2 left-1/2 -translate-x-1/2 z-20 uppercase text-sm text-white/60 select-none"
-            :class="{ 'preload-fade': preloadActive, 'is-revealed': preloadStep >= 5 }"
-        >
-            <span class="inline-block animate-pulse">Scroll → Drag → Click</span>
-        </div>
+        <section id="work" class="work px-(--margin) pb-[18vh] pt-[8vh]">
+            <h2 v-reveal class="font-display text-lg">Work</h2>
 
-        <!-- Horizontal gallery -->
-        <section
-            ref="galleryEl"
-            class="home-gallery relative w-full h-full overflow-x-auto overflow-y-hidden flex items-center"
-            :class="{
-                'is-dragging': isDragging,
-                'preload-fade': preloadActive,
-                'is-revealed': preloadStep >= 5,
-                'is-preloaded': preloadActive && preloadStep >= 5,
-            }"
-            @wheel="onWheel"
-            @scroll.passive="onScroll"
-            @pointerdown="onPointerDown"
-            @pointermove="onPointerMove"
-            @pointerup="onPointerUp"
-            @pointercancel="onPointerUp"
-            @pointerleave="onPointerUp"
-        >
-            <ul
-                class="home-track flex items-center gap-[clamp(1.5rem,4vw,4rem)] h-full px-[clamp(1.5rem,8vw,10rem)]"
-            >
+            <ul class="mt-[10vh] flex flex-col gap-[72px] md:gap-0">
                 <li
                     v-for="(project, index) in projectsData"
                     :key="project._id"
-                    :ref="(el) => setCardRef(el, index)"
-                    class="home-card relative shrink-0 h-[50vh] md:h-[78vh] aspect-3/4"
+                    class="work-item md:grid md:grid-cols-12"
+                    :class="`slot-${index % 3}`"
                 >
                     <NuxtLink
                         :to="`/work/${project?.slug?.current}`"
-                        :aria-label="project?.title"
-                        class="group block w-full h-full relative"
+                        class="group flex flex-col gap-3"
                         @click="onCardClick($event, project?.slug?.current)"
                     >
-                        <!-- Index number -->
                         <span
-                            class="absolute -top-6 left-0 text-sm uppercase tracking-wider text-white/50"
+                            v-reveal
+                            class="flex items-baseline justify-between gap-4 text-sm text-(--ink-soft) transition-colors duration-300 group-hover:text-red"
                         >
-                            {{ String(index + 1).padStart(2, '0') }}
+                            <span>{{ project?.title }}</span>
+                            <span v-if="project?.date">{{ getYear(project?.date) }}</span>
                         </span>
 
-                        <!-- Image wrapper — gets view-transition-name on click -->
-                        <div
-                            class="home-card-image relative w-full h-full overflow-hidden bg-white/5"
-                            :style="
-                                activeSlug === project?.slug?.current
-                                    ? { viewTransitionName: 'project-image' }
-                                    : {}
-                            "
-                        >
-                            <CommonMediaWebGLImage
-                                class="absolute inset-0 w-full h-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
-                                :image="project?.featuredImage"
-                                :alt="project?.title"
-                                width="1600"
-                                mobileWidth="800"
-                                :duration="700"
-                            />
-
-                            <!-- Hover veil -->
+                        <div class="parallax overflow-hidden">
                             <div
-                                class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500"
-                            ></div>
+                                class="work-image transition-transform duration-700 ease-(--ease-out-expo) group-hover:scale-[1.03]"
+                                :style="
+                                    activeSlug === project?.slug?.current
+                                        ? { viewTransitionName: 'project-image' }
+                                        : {}
+                                "
+                            >
+                                <CommonMediaPixelImage
+                                    :image="project?.featuredImage"
+                                    :alt="project?.title"
+                                    width="1600"
+                                    mobileWidth="900"
+                                />
+                            </div>
                         </div>
 
-                        <!-- Title under card -->
-                        <div
-                            class="absolute -bottom-6 left-0 right-0 flex items-baseline justify-between gap-4"
+                        <span
+                            v-reveal="1"
+                            class="flex items-baseline justify-between gap-4 text-[clamp(16px,1.1vw,18px)]"
                         >
-                            <h2
-                                class="uppercase font-medium tracking-tight text-base text-white leading-none"
-                            >
-                                {{ project?.title }}
-                            </h2>
+                            <span class="line-clamp-2 max-w-[60ch]">{{ project?.description || 'View project' }}</span>
                             <span
-                                class="uppercase text-white/40 text-sm whitespace-nowrap"
-                                v-if="project?.date"
+                                class="shrink-0 transition-transform duration-500 ease-(--ease-out-expo) group-hover:translate-x-1.5"
+                                aria-hidden="true"
+                                >→</span
                             >
-                                {{ getYear(project?.date) }}
-                            </span>
-                        </div>
+                        </span>
                     </NuxtLink>
                 </li>
-
-                <!-- end pad so the last card can rest comfortably -->
-                <li class="shrink-0 w-[8vw] h-full" aria-hidden="true"></li>
             </ul>
         </section>
-
-        <!-- Active project name (overlay, big and bold) -->
-        <div
-            class="pointer-events-none fixed top-1/2 right-2 -translate-y-1/2 z-10 hidden md:block"
-            :class="{ 'preload-fade': preloadActive, 'is-revealed': preloadStep >= 6 }"
-        >
-            <h3
-                key="active-title"
-                class="uppercase font-medium tracking-tighter text-white/6 text-[clamp(4rem,12vw,16rem)] leading-[0.85] writing-vertical select-none"
-            >
-                {{ activeTitle }}
-            </h3>
-        </div>
     </div>
 </template>
 
@@ -132,14 +85,13 @@ import { buildBodyClass } from '@/utils'
 import { useSeoObject } from '@/composables/seo'
 import { getHomepageData } from '@/data/homepage'
 import { getProjects } from '@/data/projects'
-import { getProjectsArchiveMeta } from '@/data/projectsArchiveMeta'
 
 const route = useRoute()
-const path = route.path
-const bodyClass = buildBodyClass(path)
+const bodyClass = buildBodyClass(route.path)
+
+const siteSettingsData = inject('siteSettingsData')
 
 const homeData = await getHomepageData()
-const archiveMeta = await getProjectsArchiveMeta()
 const projectsData = await getProjects()
 
 useHead({
@@ -153,243 +105,14 @@ useSeoObject(homeData?.value?.seo, homeData?.value?.title)
 const pageTitle = useState('page-title')
 pageTitle.value = ''
 
-// Home preload sequence — only runs when home is the initial page load
-// (SSR/prerender flips `preloadActive` on; client-side navigation back to
-// home does not, so the intro doesn't replay).
-const preloadStep = useState('home-preload-step', () => 99)
-const preloadActive = useState('home-preload-active', () => false)
-if (import.meta.server) {
-    preloadActive.value = true
-    preloadStep.value = 0
-}
-
-// --- Gallery refs / state ---
-const galleryEl = ref(null)
-const cardEls = ref([])
-const activeIndex = ref(0)
 const activeSlug = ref(null)
-const isDragging = ref(false)
 
-const setCardRef = (el, index) => {
-    if (el) cardEls.value[index] = el
-}
+const getYear = dateStr => (dateStr ? new Date(dateStr).getFullYear() : '')
 
-const activeTitle = computed(
-    () => projectsData?.value?.[activeIndex.value]?.title || '',
-)
-
-const getYear = dateStr => {
-    if (!dateStr) return ''
-    return new Date(dateStr).getFullYear()
-}
-
-// --- Smooth horizontal scroll via lerp toward a target position ---
-let targetX = 0
-let lerpRaf = null
-let wheelIdleTimer = null
-
-const clampTarget = x => {
-    if (!galleryEl.value) return x
-    const max = galleryEl.value.scrollWidth - galleryEl.value.clientWidth
-    return Math.max(0, Math.min(max, x))
-}
-
-const startLerp = () => {
-    if (lerpRaf) return
-    const tick = () => {
-        if (!galleryEl.value) {
-            lerpRaf = null
-            return
-        }
-        const current = galleryEl.value.scrollLeft
-        const diff = targetX - current
-        if (Math.abs(diff) < 0.5) {
-            galleryEl.value.scrollLeft = targetX
-            lerpRaf = null
-            return
-        }
-        galleryEl.value.scrollLeft = current + diff * 0.18
-        lerpRaf = requestAnimationFrame(tick)
-    }
-    lerpRaf = requestAnimationFrame(tick)
-}
-
-const snapToNearest = () => {
-    if (!galleryEl.value || isDragging.value) return
-    const galleryRect = galleryEl.value.getBoundingClientRect()
-    const centerX = galleryRect.left + galleryRect.width / 2
-    let bestDelta = 0
-    let bestDist = Infinity
-    cardEls.value.forEach(card => {
-        if (!card) return
-        const rect = card.getBoundingClientRect()
-        const cardCenter = rect.left + rect.width / 2
-        const dist = Math.abs(cardCenter - centerX)
-        if (dist < bestDist) {
-            bestDist = dist
-            bestDelta = cardCenter - centerX
-        }
-    })
-    if (bestDist === Infinity) return
-    targetX = clampTarget(galleryEl.value.scrollLeft + bestDelta)
-    startLerp()
-}
-
-const scheduleSnap = (delay = 160) => {
-    if (wheelIdleTimer) clearTimeout(wheelIdleTimer)
-    wheelIdleTimer = setTimeout(() => {
-        wheelIdleTimer = null
-        snapToNearest()
-    }, delay)
-}
-
-const onWheel = e => {
-    if (!galleryEl.value) return
-    // Trackpad horizontal scroll: let the browser handle it natively
-    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return
-    e.preventDefault()
-    targetX = clampTarget(targetX + e.deltaY)
-    startLerp()
-    scheduleSnap()
-}
-
-// --- Pointer drag (mouse only — touch keeps native momentum scroll) ---
-let pointerDownX = 0
-let pointerDownScroll = 0
-let activePointerId = null
-let dragMoved = false
-const DRAG_THRESHOLD = 4
-
-const onPointerDown = e => {
-    if (!galleryEl.value) return
-    if (e.pointerType !== 'mouse') return
-    if (e.button !== 0) return
-    // Suppress native image/anchor drag so the grab works on thumbnails too
-    e.preventDefault()
-    isDragging.value = true
-    dragMoved = false
-    pointerDownX = e.clientX
-    pointerDownScroll = galleryEl.value.scrollLeft
-    activePointerId = e.pointerId
-    if (lerpRaf) {
-        cancelAnimationFrame(lerpRaf)
-        lerpRaf = null
-    }
-    if (wheelIdleTimer) {
-        clearTimeout(wheelIdleTimer)
-        wheelIdleTimer = null
-    }
-    targetX = galleryEl.value.scrollLeft
-}
-
-const onPointerMove = e => {
-    if (!isDragging.value || !galleryEl.value) return
-    const dx = e.clientX - pointerDownX
-    if (!dragMoved && Math.abs(dx) > DRAG_THRESHOLD) {
-        dragMoved = true
-        try {
-            galleryEl.value.setPointerCapture(activePointerId)
-        } catch {}
-    }
-    if (dragMoved) {
-        const next = clampTarget(pointerDownScroll - dx)
-        galleryEl.value.scrollLeft = next
-        targetX = next
-    }
-}
-
-const onPointerUp = () => {
-    if (!isDragging.value) return
-    isDragging.value = false
-    if (activePointerId != null && galleryEl.value) {
-        try {
-            galleryEl.value.releasePointerCapture(activePointerId)
-        } catch {}
-    }
-    activePointerId = null
-    // `dragMoved` is consumed by onCardClick if a click follows
-    if (dragMoved) snapToNearest()
-}
-
-// --- Track which card is in the viewport center ---
-let scrollRaf = null
-const onScroll = () => {
-    if (scrollRaf) return
-    scrollRaf = requestAnimationFrame(() => {
-        scrollRaf = null
-        if (!galleryEl.value) return
-        const galleryRect = galleryEl.value.getBoundingClientRect()
-        const centerX = galleryRect.left + galleryRect.width / 2
-        let bestIdx = 0
-        let bestDist = Infinity
-        cardEls.value.forEach((card, i) => {
-            if (!card) return
-            const rect = card.getBoundingClientRect()
-            const cardCenter = rect.left + rect.width / 2
-            const dist = Math.abs(cardCenter - centerX)
-            if (dist < bestDist) {
-                bestDist = dist
-                bestIdx = i
-            }
-        })
-        activeIndex.value = bestIdx
-    })
-}
-
-const preloadTimers = []
-const schedulePreloadStep = (step, delay) => {
-    preloadTimers.push(setTimeout(() => (preloadStep.value = step), delay))
-}
-
-onMounted(() => {
-    if (preloadActive.value) {
-        // Mask reveal (left → right) on Header h1, h2, h3 and Footer Info button…
-        schedulePreloadStep(1, 500)
-        schedulePreloadStep(2, 750)
-        schedulePreloadStep(3, 1000)
-        schedulePreloadStep(4, 1250)
-        // …then fade in gallery (cards stagger via .is-preloaded) and active title
-        schedulePreloadStep(5, 1600)
-        schedulePreloadStep(6, 2200)
-        // Mark preload complete after the last reveal animation finishes
-        preloadTimers.push(
-            setTimeout(() => {
-                preloadActive.value = false
-                preloadStep.value = 99
-            }, 2800),
-        )
-    }
-
-    nextTick(() => {
-        targetX = galleryEl.value?.scrollLeft || 0
-        onScroll()
-    })
-})
-
-onBeforeUnmount(() => {
-    if (lerpRaf) cancelAnimationFrame(lerpRaf)
-    if (scrollRaf) cancelAnimationFrame(scrollRaf)
-    if (wheelIdleTimer) clearTimeout(wheelIdleTimer)
-    preloadTimers.forEach(clearTimeout)
-    // If the user navigated away mid-sequence, end the preload immediately
-    // so Header/Footer aren't stuck masked and the intro doesn't resume.
-    preloadActive.value = false
-    preloadStep.value = 99
-})
-
-// --- Shared element morph on click ---
-// Tag the clicked thumbnail with the shared `view-transition-name` *before*
-// navigation, so the View Transitions snapshot captures it. The destination
-// hero on /work/[slug] uses the same name and morphs in.
+// Shared element morph: tag the clicked image with the shared view-transition-name
+// *before* navigating, so the snapshot catches it and the project hero morphs in.
 const onCardClick = async (e, slug) => {
-    // Suppress click that ended a drag
-    if (dragMoved) {
-        e.preventDefault()
-        dragMoved = false
-        return
-    }
     if (!slug) return
-    // Respect modifier clicks / new-tab.
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return
     e.preventDefault()
     activeSlug.value = slug
@@ -399,51 +122,53 @@ const onCardClick = async (e, slug) => {
 </script>
 
 <style scoped>
-@reference "../assets/styles/global.css";
+/* Loose scatter: three placements on the 12-column grid, repeating.
+   Wide gaps are the pauses between projects. */
+@media (min-width: 768px) {
+    .work-item {
+        margin-top: 24vh;
+    }
+    .work-item:first-child {
+        margin-top: 0;
+    }
+    .slot-0 > a {
+        grid-column: 1 / span 6;
+    }
+    .slot-1 {
+        margin-top: calc(24vh - 80px);
+    }
+    .slot-1 > a {
+        grid-column: 9 / span 4;
+    }
+    .slot-2 > a {
+        grid-column: 3 / span 7;
+    }
+}
+@media (max-width: 767px) {
+    .slot-1 > a {
+        width: 68%;
+        margin-left: auto;
+    }
+    .slot-2 > a {
+        width: 82%;
+    }
+}
 
-.home-gallery {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    cursor: grab;
-    touch-action: pan-x pan-y;
-    user-select: none;
+/* scroll-linked drift on the pictures, transform only */
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .work-image {
+            animation: image-drift linear both;
+            animation-timeline: view();
+        }
+    }
 }
-.home-gallery::-webkit-scrollbar {
-    display: none;
-}
-.home-gallery.is-dragging,
-.home-gallery.is-dragging * {
-    cursor: grabbing !important;
-}
-
-/* Prevent native image/anchor drag from hijacking the grab gesture */
-.home-gallery img,
-.home-gallery a {
-    -webkit-user-drag: none;
-}
-
-.writing-vertical {
-    writing-mode: vertical-rl;
-}
-
-/* Stagger reveal — held until preload reveals the gallery */
-.home-gallery.is-preloaded .home-card {
-    opacity: 0;
-    transform: translateY(8px);
-    animation: card-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-.home-gallery.is-preloaded .home-card:nth-child(1) { animation-delay: 0.05s; }
-.home-gallery.is-preloaded .home-card:nth-child(2) { animation-delay: 0.12s; }
-.home-gallery.is-preloaded .home-card:nth-child(3) { animation-delay: 0.19s; }
-.home-gallery.is-preloaded .home-card:nth-child(4) { animation-delay: 0.26s; }
-.home-gallery.is-preloaded .home-card:nth-child(5) { animation-delay: 0.33s; }
-.home-gallery.is-preloaded .home-card:nth-child(6) { animation-delay: 0.40s; }
-.home-gallery.is-preloaded .home-card:nth-child(n + 7) { animation-delay: 0.47s; }
-
-@keyframes card-in {
+@keyframes image-drift {
+    from {
+        transform: translate3d(0, 6%, 0) scale(1.04);
+    }
     to {
-        opacity: 1;
-        transform: translateY(0);
+        transform: translate3d(0, -6%, 0) scale(1.04);
     }
 }
 </style>

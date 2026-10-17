@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Bytesized&family=Lexend:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;1,6..96,500&family=Jost:wght@400;500&display=swap');
 
 
 @source "../../components";
@@ -10,80 +10,174 @@
 @source "../../error.vue";
 
 @theme {
+    /* Brand colours — unchanged. Ground is black, ink is white, red is the one accent. */
     --color-white: #e2fffc;
     --color-black: #101012;
     --color-dark-black: #000000;
     --color-blue: #0000ff;
     --color-red: #f33c17;
 
-    --font-default: "Lexend", sans-serif;
-    --font-secondary: "Bytesized", sans-serif;
+    --font-default: "Jost", sans-serif;
+    --font-display: "Bodoni Moda", serif;
 
-    --text-sm: 12px;
-    --text-sm--line-height: 1.25;
-    --text-base: 100%;
-    --text-base--line-height: normal;
-    --text-md: 20px;
-    --text-md--line-height: 1;
-    --text-lg: 32px;
-    --text-lg--line-height: 1.1;
-}
+    /* Type steps: the monument is sized per component, these do the rest */
+    --text-sm: 13px;
+    --text-sm--line-height: 1.3;
+    --text-base: 17px;
+    --text-base--line-height: 1.6;
+    --text-md: 22px;
+    --text-md--line-height: 1.35;
+    --text-lg: clamp(32px, 2.4vw + 16px, 56px);
+    --text-lg--line-height: 1;
 
-/* Fonts */
-/*
-@font-face {
-    font-family: 'ABCDiatype';
-    src: url('/fonts/ABCDiatype-Regular-Trial.woff2') format('woff2'),
-        url('/fonts/ABCDiatype-Regular-Trial.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-} */
-
-/* Home preload sequence: mask reveal (left → right) and fade reveal.
-   Uses a keyframe animation (not a transition) so the reveal can be replayed
-   — e.g. when the Header h3 pageTitle changes between work pages. */
-.preload-mask {
-    clip-path: inset(0 100% 0 0);
-    -webkit-clip-path: inset(0 100% 0 0);
-    will-change: clip-path;
-}
-.preload-mask.is-revealed {
-    animation: preload-mask-reveal 0.6s cubic-bezier(0.7, 0, 0.3, 1) forwards;
-}
-@keyframes preload-mask-reveal {
-    from {
-        clip-path: inset(0 100% 0 0);
-        -webkit-clip-path: inset(0 100% 0 0);
-    }
-    to {
-        clip-path: inset(0 0 0 0);
-        -webkit-clip-path: inset(0 0 0 0);
-    }
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
 }
 
-/* Page title: enter left→right, leave right→left */
-.page-title-enter-active,
-.page-title-leave-active {
-    transition: clip-path 0.6s cubic-bezier(0.7, 0, 0.3, 1);
-    will-change: clip-path;
-}
-.page-title-enter-from,
-.page-title-leave-to {
-    clip-path: inset(0 100% 0 0);
-    -webkit-clip-path: inset(0 100% 0 0);
-}
-.page-title-enter-to,
-.page-title-leave-from {
-    clip-path: inset(0 0 0 0);
-    -webkit-clip-path: inset(0 0 0 0);
+:root {
+    --margin: clamp(16px, 2vw, 32px);
+    --ink-soft: color-mix(in srgb, var(--color-white) 62%, transparent);
 }
 
-.preload-fade {
+html {
+    scroll-behavior: smooth;
+}
+
+.font-display {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    letter-spacing: -0.03em;
+    line-height: 0.92;
+}
+
+::selection {
+    background: var(--color-red);
+    color: var(--color-black);
+}
+
+:focus-visible {
+    outline: 2px solid var(--color-red);
+    outline-offset: 3px;
+}
+
+/* ---------- Scroll reveal (v-reveal) ----------
+   Hidden only when JS is running (html.has-js), with a timed safety net so
+   content never stays invisible. */
+.has-js [data-reveal] {
     opacity: 0;
-    transition: opacity 0.6s ease;
-    will-change: opacity;
+    transform: translateY(28px);
+    transition:
+        opacity 0.9s var(--ease-out-expo) var(--reveal-delay, 0ms),
+        transform 0.9s var(--ease-out-expo) var(--reveal-delay, 0ms);
+    animation: reveal-safety 0s 4s forwards;
 }
-.preload-fade.is-revealed {
+.has-js [data-reveal].is-in {
     opacity: 1;
+    transform: none;
+}
+@keyframes reveal-safety {
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* Mask reveal: the text rises out of its own line box. The child moves, not the
+   clip, so IntersectionObserver still sees the element. */
+.has-js [data-reveal='mask'] {
+    opacity: 1;
+    transform: none;
+    overflow: hidden;
+    padding-bottom: 0.16em;
+    margin-bottom: -0.16em;
+}
+.has-js [data-reveal='mask'] > * {
+    transform: translateY(105%);
+    transition: transform 1s var(--ease-in-out-quart) var(--reveal-delay, 0ms);
+    animation: mask-safety 0s 4s forwards;
+}
+@keyframes mask-safety {
+    to {
+        transform: none;
+    }
+}
+.has-js [data-reveal='mask'].is-in > * {
+    transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .has-js [data-reveal],
+    .has-js [data-reveal='mask'],
+    .has-js [data-reveal='mask'] > * {
+        opacity: 1;
+        transform: none;
+        transition: none;
+        animation: none;
+    }
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+/* ---------- Marquee ---------- */
+.marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 38s linear infinite;
+}
+.marquee:hover .marquee-track {
+    animation-play-state: paused;
+}
+@keyframes marquee {
+    to {
+        transform: translate3d(-50%, 0, 0);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+        animation: none;
+    }
+}
+
+/* ---------- Buttons: flat, square, one fill ---------- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    padding: 16px 24px;
+    background: var(--color-red);
+    color: var(--color-black);
+    font-weight: 500;
+    font-size: 17px;
+    line-height: 1;
+    transition:
+        transform 0.35s var(--ease-out-expo),
+        background-color 0.25s ease,
+        color 0.25s ease;
+}
+.btn:hover {
+    background: var(--color-white);
+}
+.btn:active {
+    transform: scale(0.97);
+}
+.btn .btn-arrow {
+    display: inline-block;
+    transition: transform 0.35s var(--ease-out-expo);
+}
+.btn:hover .btn-arrow {
+    transform: translateY(3px);
+}
+
+/* Underline link used in navigation: a flat line that fades in */
+.link-slide {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.28em;
+    text-decoration-color: transparent;
+    transition: text-decoration-color 0.35s ease, color 0.25s ease;
+}
+.link-slide:hover,
+.link-slide.router-link-active {
+    text-decoration-color: currentColor;
 }

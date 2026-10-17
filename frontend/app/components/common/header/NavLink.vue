@@ -1,8 +1,8 @@
 <template>
     <CommonLink
         :link="item?.link"
-        active-class="text-red"
-        class="nav-link transition-colors"
+        active-class="router-link-active"
+        class="nav-link link-slide"
     >
         {{ item?.text }}
     </CommonLink>
