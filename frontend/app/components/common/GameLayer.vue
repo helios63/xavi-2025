@@ -74,19 +74,19 @@
                     alt=""
                     draggable="false"
                     class="finale-sprite"
-                    :style="{ left: sp.x + 'px', top: sp.y + 'px', width: sp.size + 'px', zIndex: sp.id % 1000 }"
+                    :style="{ left: sp.x + 'px', top: sp.y + 'px', width: sp.width + 'px', height: sp.height + 'px', zIndex: sp.id % 1000 }"
                 />
             </div>
 
             <p
-                class="notch absolute bottom-[max(8px,env(safe-area-inset-bottom))] left-1/2 z-[2000] w-[min(640px,calc(100vw-32px))] -translate-x-1/2 bg-black p-2 text-center text-[11px] leading-snug text-white"
+                class="notch absolute bottom-[max(8px,env(safe-area-inset-bottom))] left-1/2 z-2000 w-[min(640px,calc(100vw-32px))] -translate-x-1/2 bg-black p-2 text-center text-[11px] leading-snug text-white"
             >
                 Chun-Li © CAPCOM · Mai Shiranui © SNK. Sprite animations are fan pixel art; all rights belong to
                 their respective owners.
             </p>
 
             <div
-                class="notch absolute left-1/2 top-[max(16px,env(safe-area-inset-top))] z-[2000] flex w-[min(560px,calc(100vw-32px))] -translate-x-1/2 items-center justify-between gap-4 bg-white py-4 pl-6 pr-4 text-black"
+                class="notch absolute left-1/2 top-[max(16px,env(safe-area-inset-top))] z-2000 flex w-[min(560px,calc(100vw-32px))] -translate-x-1/2 items-center justify-between gap-4 bg-white py-4 pl-6 pr-4 text-black"
                 role="dialog"
                 aria-labelledby="finale-title"
             >
@@ -116,7 +116,13 @@ const open = ref(false)
 // --- Finale ---------------------------------------------------------------
 // Sprites (no background) keep spawning at random spots and sizes and pile up
 // forever. The page behind turns opaque after the first few dozen.
-const SPRITES = ['/sprites/chun-walk.webp', '/sprites/chun-red.webp', '/sprites/mai-fan.webp']
+// Native pixel-grid sizes: sprites are only ever shown at whole multiples of these,
+// so every art pixel stays a perfect square on screen.
+const SPRITES = [
+    { src: '/sprites/chun-walk.webp', w: 69, h: 82 },
+    { src: '/sprites/chun-red.webp', w: 120, h: 150 },
+    { src: '/sprites/mai-fan.webp', w: 150, h: 119 },
+]
 const MAX_SPRITES = 400 // oldest ones are buried anyway; drop them to keep the DOM light
 const OPAQUE_AFTER = 45
 const sprites = ref([])
@@ -130,17 +136,22 @@ const spawnOne = () => {
     const small = window.innerWidth < 768
     const min = small ? 56 : 80
     const max = small ? 220 : 360
-    // bias towards smaller sprites so big ones stay a surprise
-    const size = Math.round(min + Math.pow(Math.random(), 1.8) * (max - min))
-    const sprite = {
+    const base = SPRITES[Math.floor(Math.random() * SPRITES.length)]
+    // whole-number scale only; biased towards the small end so big ones stay a surprise
+    const kMin = Math.max(1, Math.ceil(min / base.w))
+    const kMax = Math.max(kMin, Math.floor(max / base.w))
+    const k = kMin + Math.floor(Math.pow(Math.random(), 1.8) * (kMax - kMin + 1))
+    const width = base.w * k
+    const height = base.h * k
+    sprites.value.push({
         id: nextId++,
-        src: SPRITES[Math.floor(Math.random() * SPRITES.length)],
-        size,
-        // centre anywhere on screen, edges may crop
-        x: Math.round(Math.random() * window.innerWidth - size / 2),
-        y: Math.round(Math.random() * window.innerHeight - size * 0.6),
-    }
-    sprites.value.push(sprite)
+        src: base.src,
+        width,
+        height,
+        // centre anywhere on screen, edges may crop; whole pixels so the grid never straddles
+        x: Math.round(Math.random() * window.innerWidth - width / 2),
+        y: Math.round(Math.random() * window.innerHeight - height * 0.6),
+    })
     if (sprites.value.length > MAX_SPRITES) sprites.value.shift()
     spawned.value++
 }
@@ -231,7 +242,6 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 }
 .finale-sprite {
     position: absolute;
-    height: auto;
     image-rendering: pixelated;
     user-select: none;
     pointer-events: none;
