@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;1,6..96,500&family=Jost:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
 
 @source "../../components";
@@ -17,8 +17,9 @@
     --color-blue: #0000ff;
     --color-red: #f33c17;
 
-    --font-default: "Jost", sans-serif;
-    --font-display: "Bodoni Moda", serif;
+    --font-default: "Space Grotesk", sans-serif;
+    --font-display: "Pixelify Sans", monospace;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
     /* Type steps: the monument is sized per component, these do the rest */
     --text-sm: 13px;
@@ -45,9 +46,97 @@ html {
 
 .font-display {
     font-family: var(--font-display);
-    font-optical-sizing: auto;
-    letter-spacing: -0.03em;
+    font-weight: 700;
+    letter-spacing: -0.02em;
     line-height: 0.92;
+}
+
+/* ---------- UI kit: HUD labels, chips, notched pixel corners, frames ---------- */
+.hud {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.2;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+/* 4px stepped corners: the pixel silhouette shared by buttons and chips */
+.notch {
+    clip-path: polygon(
+        0 4px, 4px 4px, 4px 0,
+        calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px,
+        100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%,
+        4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px)
+    );
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 7px 10px;
+    background: color-mix(in srgb, var(--color-white) 12%, transparent);
+    color: var(--color-white);
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+a.chip:hover,
+button.chip:hover,
+.chip.is-active,
+.chip.router-link-active {
+    background: var(--color-white);
+    color: var(--color-black);
+}
+.chip-red {
+    background: var(--color-red);
+    color: var(--color-black);
+}
+.dot {
+    width: 8px;
+    height: 8px;
+    background: currentColor;
+    animation: blink 1.4s steps(2, jump-none) infinite;
+}
+@keyframes blink {
+    50% {
+        opacity: 0.2;
+    }
+}
+
+/* Corner marks around a picture: top-left and bottom-right, red on hover */
+.frame {
+    position: relative;
+}
+.frame::before,
+.frame::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    z-index: 2;
+    pointer-events: none;
+    transition: transform 0.45s var(--ease-out-expo), border-color 0.25s ease;
+}
+.frame::before {
+    top: -8px;
+    left: -8px;
+    border-top: 3px solid var(--color-white);
+    border-left: 3px solid var(--color-white);
+}
+.frame::after {
+    right: -8px;
+    bottom: -8px;
+    border-right: 3px solid var(--color-white);
+    border-bottom: 3px solid var(--color-white);
+}
+.group:hover .frame::before,
+.frame:hover::before {
+    transform: translate(-4px, -4px);
+    border-color: var(--color-red);
+}
+.group:hover .frame::after,
+.frame:hover::after {
+    transform: translate(4px, 4px);
+    border-color: var(--color-red);
 }
 
 ::selection {
@@ -143,13 +232,22 @@ html {
 .btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.6em;
-    padding: 16px 24px;
+    gap: 0.8em;
+    padding: 18px 26px;
     background: var(--color-red);
     color: var(--color-black);
+    font-family: var(--font-mono);
     font-weight: 500;
-    font-size: 17px;
+    font-size: 14px;
     line-height: 1;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    clip-path: polygon(
+        0 6px, 6px 6px, 6px 0,
+        calc(100% - 6px) 0, calc(100% - 6px) 6px, 100% 6px,
+        100% calc(100% - 6px), calc(100% - 6px) calc(100% - 6px), calc(100% - 6px) 100%,
+        6px 100%, 6px calc(100% - 6px), 0 calc(100% - 6px)
+    );
     transition:
         transform 0.35s var(--ease-out-expo),
         background-color 0.25s ease,

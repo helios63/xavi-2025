@@ -1,19 +1,27 @@
 <template>
-    <article class="work-detail relative w-full overflow-x-clip">
+    <article data-section="project" class="work-detail relative w-full overflow-x-clip">
         <!-- Title: the name-as-monument idea, at project scale -->
         <section class="px-(--margin) pb-10 pt-36 md:pt-44">
             <h1
                 v-reveal:mask
-                class="font-display text-[clamp(48px,11vw,190px)] leading-[0.88]"
+                class="font-display text-[clamp(40px,9vw,150px)] uppercase leading-[0.9]"
             >
                 <span class="block">{{ projectData?.title }}</span>
             </h1>
-            <p v-if="year" v-reveal="2" class="mt-6 text-md text-(--ink-soft)">{{ year }}</p>
+            <!-- spec strip -->
+            <div v-reveal="2" class="mt-8 flex flex-wrap items-center gap-2">
+                <NuxtLink to="/work/" class="hud chip notch" data-cursor="Back">← All work</NuxtLink>
+                <span v-if="year" class="hud chip notch tabular-nums">{{ year }}</span>
+                <span v-if="position" class="hud chip notch tabular-nums text-(--ink-soft)">
+                    Project {{ String(position.index).padStart(2, '0') }} / {{ String(position.total).padStart(2, '0') }}
+                </span>
+                <span v-if="marmosetUrl" class="hud chip chip-red notch">3D viewer</span>
+            </div>
         </section>
 
         <!-- Hero: featured image, natural aspect ratio (shared-element target) -->
         <section class="hero px-(--margin) pb-[8vh]">
-            <div class="hero-image inline-flex" style="view-transition-name: project-image">
+            <div class="hero-image frame inline-flex" style="view-transition-name: project-image">
                 <CommonMediaImage
                     class="block h-auto w-auto max-w-full md:max-w-[72vw]"
                     :image="projectData?.featuredImage"
@@ -50,12 +58,14 @@
                 :class="rowAlignment(index)"
             >
                 <div :class="rowSize(index)">
+                    <div class="frame">
                     <CommonMediaPixelImage
                         :image="picture"
                         :alt="projectData?.title"
                         width="2200"
                         mobileWidth="1100"
                     />
+                    </div>
                 </div>
             </figure>
         </section>
@@ -83,9 +93,9 @@
                 :to="`/work/${nextProject.slug?.current}`"
                 class="group block"
             >
-                <span class="mb-4 block text-md text-(--ink-soft)">Next project</span>
+                <span class="hud mb-4 block text-(--ink-soft)">Next project</span>
                 <span
-                    class="font-display block text-[clamp(48px,10vw,170px)] leading-[0.9] transition-colors duration-300 group-hover:text-red"
+                    class="font-display block text-[clamp(40px,8vw,130px)] uppercase leading-[0.92] transition-colors duration-300 group-hover:text-red"
                 >
                     {{ nextProject.title }}
                     <span
@@ -96,7 +106,11 @@
                 </span>
             </NuxtLink>
 
-            <NuxtLink to="/work/" class="link-slide mt-10 inline-block">All work</NuxtLink>
+            <div class="mt-10 flex flex-wrap gap-2">
+                <NuxtLink v-if="prevProject" :to="`/work/${prevProject.slug?.current}`" class="hud chip notch" data-cursor="Prev">← Previous</NuxtLink>
+                <NuxtLink to="/work/" class="hud chip notch">All work</NuxtLink>
+                <NuxtLink v-if="nextProject" :to="`/work/${nextProject.slug?.current}`" class="hud chip chip-red notch" data-cursor="Next">Next →</NuxtLink>
+            </div>
         </section>
     </article>
 </template>
@@ -169,6 +183,19 @@ const nextProject = computed(() => {
     const idx = list.findIndex(p => p?.slug?.current === currentSlug)
     if (idx === -1) return list[0]
     return list[(idx + 1) % list.length]
+})
+
+const prevProject = computed(() => {
+    const list = allProjects?.value || []
+    const idx = list.findIndex(p => p?.slug?.current === route.params.id)
+    if (idx === -1 || list.length < 2) return null
+    return list[(idx - 1 + list.length) % list.length]
+})
+
+const position = computed(() => {
+    const list = allProjects?.value || []
+    const idx = list.findIndex(p => p?.slug?.current === route.params.id)
+    return idx === -1 ? null : { index: idx + 1, total: list.length }
 })
 
 // Editorial rhythm: alternate full / right / left / wide-narrow.

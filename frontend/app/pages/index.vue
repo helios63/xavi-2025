@@ -3,6 +3,7 @@
         <HomeHero
             :name="siteSettingsData?.siteTitle || 'Xavi Noguera'"
             :featured="projectsData?.[0]"
+            :projectCount="projectsData?.length || 0"
             @open="onCardClick"
         />
 
@@ -13,7 +14,7 @@
                     <span
                         v-for="m in 3"
                         :key="m"
-                        class="font-display italic whitespace-nowrap pr-[4vw] text-[11vw]"
+                        class="font-display uppercase whitespace-nowrap pr-[4vw] text-[10vw]"
                     >
                         {{ siteSettingsData?.siteTitle || 'Xavi Noguera' }} — 3D Character Artist —
                     </span>
@@ -21,8 +22,14 @@
             </div>
         </div>
 
-        <section id="work" class="work px-(--margin) pb-[18vh] pt-[8vh]">
-            <h2 v-reveal class="font-display text-lg">Work</h2>
+        <section id="work" data-section="work" class="work px-(--margin) pb-[18vh] pt-[8vh]">
+            <div v-reveal class="flex flex-wrap items-end justify-between gap-6">
+                <h2 class="font-display text-[clamp(48px,7vw,120px)] uppercase">Work</h2>
+                <div class="flex items-center gap-2">
+                    <span class="hud chip notch text-(--ink-soft)">{{ projectsData?.length || 0 }} projects</span>
+                    <NuxtLink to="/work/" class="hud chip notch" data-cursor="Archive">All work →</NuxtLink>
+                </div>
+            </div>
 
             <ul class="mt-[10vh] flex flex-col gap-[72px] md:gap-0">
                 <li
@@ -38,12 +45,16 @@
                     >
                         <span
                             v-reveal
-                            class="flex items-baseline justify-between gap-4 text-sm text-(--ink-soft) transition-colors duration-300 group-hover:text-red"
+                            class="hud flex items-center justify-between gap-4 transition-colors duration-300 group-hover:text-red"
                         >
-                            <span>{{ project?.title }}</span>
-                            <span v-if="project?.date">{{ getYear(project?.date) }}</span>
+                            <span class="flex items-center gap-3">
+                                <span class="chip notch tabular-nums">{{ String(index + 1).padStart(2, '0') }}</span>
+                                <span>{{ project?.title }}</span>
+                            </span>
+                            <span v-if="project?.date" class="text-(--ink-soft) tabular-nums">{{ getYear(project?.date) }}</span>
                         </span>
 
+                        <div class="frame" data-cursor="View">
                         <div class="parallax overflow-hidden">
                             <div
                                 class="work-image transition-transform duration-700 ease-(--ease-out-expo) group-hover:scale-[1.03]"
@@ -61,6 +72,7 @@
                                 />
                             </div>
                         </div>
+                        </div>
 
                         <span
                             v-reveal="1"
@@ -68,9 +80,9 @@
                         >
                             <span class="line-clamp-2 max-w-[60ch]">{{ project?.description || 'View project' }}</span>
                             <span
-                                class="shrink-0 transition-transform duration-500 ease-(--ease-out-expo) group-hover:translate-x-1.5"
+                                class="hud chip notch shrink-0 group-hover:bg-red group-hover:text-black"
                                 aria-hidden="true"
-                                >→</span
+                                >Open ↗</span
                             >
                         </span>
                     </NuxtLink>

@@ -22,6 +22,12 @@
             :credits="siteSettingsData?.credits"
         />
 
+        <!-- HUD layer -->
+        <ClientOnly>
+            <CommonScrollHud />
+            <CommonCursorHud />
+        </ClientOnly>
+
         <!-- Cookie Banner -->
         <ClientOnly>
             <CommonCookieBanner

@@ -2,11 +2,23 @@
     <!-- Closing section, inverse of the page: the email is the display type. -->
     <footer
         id="contact"
+        data-section="contact"
         class="closing relative z-20 flex min-h-svh flex-col justify-between bg-white text-black px-(--margin) pt-[18vh] pb-[5vh]"
     >
-        <p v-reveal class="max-w-[22ch] text-md">
-            Have a character in mind? Tell me about it.
-        </p>
+        <div class="flex flex-wrap items-start justify-between gap-6">
+            <p v-reveal class="max-w-[22ch] text-md">
+                Have a character in mind? Tell me about it.
+            </p>
+            <button
+                v-if="contact?.email"
+                v-reveal="1"
+                class="hud notch bg-black px-4 py-3 text-white transition-colors duration-200 hover:bg-red hover:text-black"
+                data-cursor="Copy"
+                @click="copyEmail"
+            >
+                {{ copied ? 'Copied ✓' : 'Copy email' }}
+            </button>
+        </div>
 
         <div class="my-[10vh]">
             <a
@@ -15,6 +27,7 @@
                 v-reveal:mask
                 :href="'mailto:' + contact.email"
                 class="closing-email block w-full font-display text-[8vw] hover:text-red transition-colors duration-300"
+                data-cursor="Write"
             >
                 <span data-fit class="inline-block whitespace-nowrap">{{ contact.email }}</span>
             </a>
@@ -48,6 +61,17 @@
 </template>
 
 <script setup>
+const copied = ref(false)
+const copyEmail = async () => {
+    try {
+        await navigator.clipboard.writeText(props.contact.email)
+        copied.value = true
+        setTimeout(() => (copied.value = false), 1800)
+    } catch {
+        window.location.href = 'mailto:' + props.contact.email
+    }
+}
+
 const props = defineProps({
     contact: Object,
     socialLinks: Object,

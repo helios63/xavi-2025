@@ -1,7 +1,7 @@
 <template>
     <ul
         ref="mainNav"
-        class="flex flex-col md:flex-row items-end md:items-center gap-x-8 gap-y-2"
+        class="flex flex-col md:flex-row items-end md:items-start gap-x-2 gap-y-2"
         v-show="menuIsOpened"
     >
         <li v-for="item in items" :key="item?._key || item?.text">

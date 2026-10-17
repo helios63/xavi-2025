@@ -13,7 +13,10 @@ export default defineNuxtPlugin(nuxtApp => {
         el.style.fontSize = '100px'
         const widest = Math.max(...list.map(t => t.getBoundingClientRect().width))
         if (!widest) return
-        const size = Math.floor((100 * available) / widest * 100) / 100
+        let size = Math.floor((100 * available) / widest * 100) / 100
+        // optional cap by viewport height (data-fit-max-vh="33"): keeps stacked lines on screen
+        const maxVh = parseFloat(el.dataset.fitMaxVh)
+        if (maxVh) size = Math.min(size, (window.innerHeight * maxVh) / 100)
         el.style.fontSize = `${size}px`
         el.dispatchEvent(new CustomEvent('fit', { detail: size }))
     }

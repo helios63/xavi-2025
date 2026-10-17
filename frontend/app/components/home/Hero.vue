@@ -1,16 +1,28 @@
 <template>
     <section
         ref="root"
-        class="hero relative flex min-h-svh flex-col justify-end overflow-x-clip px-(--margin) pb-[2.5vh] pt-32"
+        data-section="hero"
+        class="hero relative flex min-h-svh flex-col justify-end overflow-x-clip px-(--margin) pb-[2.5vh] pt-28"
     >
-        <div class="mb-[5vh] flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-            <p v-reveal="3" class="max-w-[30ch] text-md">
-                Characters built from the first polygon to the final render.
-            </p>
-            <a v-reveal="4" href="#work" class="btn self-start" @click.prevent="scrollToWork">
-                See selected work
-                <span class="btn-arrow" aria-hidden="true">↓</span>
-            </a>
+        <div class="mb-[4vh] flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <div class="flex flex-col gap-6">
+                <p v-reveal="3" class="max-w-[30ch] text-md">
+                    Characters built from the first polygon to the final render.
+                </p>
+                <!-- Toolkit: the software named across the project write-ups -->
+                <ul v-reveal="4" class="flex flex-wrap gap-2" aria-label="Toolkit">
+                    <li v-for="tool in TOOLS" :key="tool" class="hud chip notch">{{ tool }}</li>
+                </ul>
+            </div>
+            <div v-reveal="5" class="flex flex-col items-start gap-4 md:items-end">
+                <span class="hud chip notch text-(--ink-soft)">
+                    <span class="dot text-red" />{{ projectCount }} selected projects
+                </span>
+                <a href="#work" class="btn" data-cursor="Scroll" @click.prevent="scrollToWork">
+                    See selected work
+                    <span class="btn-arrow" aria-hidden="true">↓</span>
+                </a>
+            </div>
         </div>
 
         <!-- The name is the architecture. Both words are fitted to the viewport width,
@@ -18,8 +30,9 @@
              idea as the project images). -->
         <h1
             v-fit
+            data-fit-max-vh="34"
             :aria-label="`${first} ${rest}`"
-            class="monument font-display text-[19vw] uppercase"
+            class="monument font-display text-[14vw] uppercase"
             @fit="onFit"
         >
             <span class="monument-line line-1">
@@ -28,7 +41,7 @@
                     v-if="featured"
                     :to="`/work/${featured?.slug?.current}`"
                     :aria-label="featured?.title"
-                    class="monument-inset"
+                    class="monument-inset frame"
                     :style="{ aspectRatio: insetRatio }"
                     @click="e => $emit('open', e, featured?.slug?.current)"
                 >
@@ -74,7 +87,10 @@
 const props = defineProps({
     name: { type: String, default: 'Xavi Noguera' },
     featured: { type: Object, default: null },
+    projectCount: { type: Number, default: 0 },
 })
+
+const TOOLS = ['ZBrush', 'Maya', 'Substance Painter', 'Photoshop', 'Marmoset Toolbag']
 defineEmits(['open'])
 
 const parts = computed(() => props.name.trim().split(/\s+/))
@@ -153,8 +169,8 @@ onBeforeUnmount(() => timers.forEach(clearTimeout))
 
 <style scoped>
 .monument {
-    letter-spacing: -0.04em;
-    line-height: 0.82;
+    letter-spacing: -0.03em;
+    line-height: 0.84;
 }
 .monument-line {
     display: flex;
