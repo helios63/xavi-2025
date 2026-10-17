@@ -83,7 +83,7 @@
                     />
                   </div>
 
-                    <figcaption
+                    <div
                         class="mt-2 uppercase text-sm text-white/40 flex justify-between"
                     >
                         <span
@@ -96,7 +96,7 @@
                             }}</span
                         >
                         <span>{{ projectData?.title }}</span>
-                    </figcaption>
+                    </div>
                 </div>
             </figure>
         </section>
