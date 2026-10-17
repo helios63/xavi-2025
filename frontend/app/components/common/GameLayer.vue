@@ -2,7 +2,7 @@
     <div aria-live="polite">
         <!-- Quest log, fixed under the HP bar -->
         <aside
-            class="quest-log fixed right-(--margin) top-[54px] z-30 bg-black text-white notch md:top-[78px]"
+            class="quest-log fixed right-(--margin) top-13.5 z-30 bg-black text-white notch md:top-19.5"
             :class="open ? 'w-[min(300px,calc(100vw-2*var(--margin)))]' : 'w-fit'"
         >
             <button
@@ -65,22 +65,28 @@
         </div>
 
         <!-- Finale: sprites fill and cover the whole page while the message stays on top -->
-        <div v-if="game.rewardOpen" class="finale fixed inset-0 z-[70]" :style="{ '--cover': cover }">
-            <div class="finale-grid absolute inset-0 grid" :style="gridStyle" aria-hidden="true">
-                <span v-for="(cell, i) in cells" :key="i" class="finale-cell" :class="{ 'is-on': cell.order < shown }">
-                    <img :src="cell.src" alt="" draggable="false" />
-                </span>
+        <div v-if="game.rewardOpen" class="finale fixed inset-0 z-70" :style="{ '--cover': cover }">
+            <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
+                <img
+                    v-for="sp in sprites"
+                    :key="sp.id"
+                    :src="sp.src"
+                    alt=""
+                    draggable="false"
+                    class="finale-sprite"
+                    :style="{ left: sp.x + 'px', top: sp.y + 'px', width: sp.size + 'px', zIndex: sp.id % 1000 }"
+                />
             </div>
 
             <p
-                class="notch absolute bottom-[max(12px,env(safe-area-inset-bottom))] left-1/2 z-10 w-[min(640px,calc(100vw-32px))] -translate-x-1/2 bg-black px-4 py-3 text-center text-[13px] leading-snug text-white"
+                class="notch absolute bottom-[max(8px,env(safe-area-inset-bottom))] left-1/2 z-[2000] w-[min(640px,calc(100vw-32px))] -translate-x-1/2 bg-black p-2 text-center text-[11px] leading-snug text-white"
             >
                 Chun-Li © CAPCOM · Mai Shiranui © SNK. Sprite animations are fan pixel art; all rights belong to
                 their respective owners.
             </p>
 
             <div
-                class="notch absolute left-1/2 top-[max(16px,env(safe-area-inset-top))] z-10 flex w-[min(560px,calc(100vw-32px))] -translate-x-1/2 items-center justify-between gap-4 bg-white py-4 pl-6 pr-4 text-black"
+                class="notch absolute left-1/2 top-[max(16px,env(safe-area-inset-top))] z-[2000] flex w-[min(560px,calc(100vw-32px))] -translate-x-1/2 items-center justify-between gap-4 bg-white py-4 pl-6 pr-4 text-black"
                 role="dialog"
                 aria-labelledby="finale-title"
             >
@@ -108,53 +114,60 @@ const route = useRoute()
 const open = ref(false)
 
 // --- Finale ---------------------------------------------------------------
+// Sprites (no background) keep spawning at random spots and sizes and pile up
+// forever. The page behind turns opaque after the first few dozen.
 const SPRITES = ['/sprites/chun-walk.webp', '/sprites/chun-red.webp', '/sprites/mai-fan.webp']
-const cells = ref([])
-const shown = ref(0)
-const cols = ref(1)
-let fillRaf = null
+const MAX_SPRITES = 400 // oldest ones are buried anyway; drop them to keep the DOM light
+const OPAQUE_AFTER = 45
+const sprites = ref([])
+const spawned = ref(0)
+let spawnTimer = null
+let nextId = 0
 
-const cover = computed(() => (cells.value.length ? Math.min(1, shown.value / cells.value.length) : 0))
-const gridStyle = computed(() => ({
-    gridTemplateColumns: `repeat(${cols.value}, 1fr)`,
-    gridAutoRows: '1fr',
-}))
+const cover = computed(() => Math.min(1, spawned.value / OPAQUE_AFTER))
+
+const spawnOne = () => {
+    const small = window.innerWidth < 768
+    const min = small ? 56 : 80
+    const max = small ? 220 : 360
+    // bias towards smaller sprites so big ones stay a surprise
+    const size = Math.round(min + Math.pow(Math.random(), 1.8) * (max - min))
+    const sprite = {
+        id: nextId++,
+        src: SPRITES[Math.floor(Math.random() * SPRITES.length)],
+        size,
+        // centre anywhere on screen, edges may crop
+        x: Math.round(Math.random() * window.innerWidth - size / 2),
+        y: Math.round(Math.random() * window.innerHeight - size * 0.6),
+    }
+    sprites.value.push(sprite)
+    if (sprites.value.length > MAX_SPRITES) sprites.value.shift()
+    spawned.value++
+}
 
 const startFinale = () => {
-    const size = window.innerWidth < 768 ? 88 : 132
-    cols.value = Math.ceil(window.innerWidth / size)
-    const rows = Math.ceil(window.innerHeight / size)
-    const total = cols.value * rows
-    // random sprite per cell, appearing in a shuffled order
-    const order = Array.from({ length: total }, (_, i) => i)
-    for (let i = total - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1))
-        ;[order[i], order[j]] = [order[j], order[i]]
-    }
-    cells.value = order.map(o => ({
-        src: SPRITES[Math.floor(Math.random() * SPRITES.length)],
-        order: o,
-    }))
-    shown.value = 0
+    sprites.value = []
+    spawned.value = 0
+    nextId = 0
     document.body.style.overflow = 'hidden'
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        shown.value = total
+        for (let i = 0; i < OPAQUE_AFTER * 2; i++) spawnOne()
         return
     }
-    const DURATION = 6500
-    const t0 = performance.now()
-    const step = now => {
-        const t = Math.min(1, (now - t0) / DURATION)
-        shown.value = Math.min(total, Math.ceil(total * t * t)) // slow start, fast finish
-        if (t < 1) fillRaf = requestAnimationFrame(step)
-        else shown.value = total
+    // starts gently, then settles at a steady rate that never stops
+    const tick = () => {
+        const n = spawned.value
+        const batch = n < 20 ? 1 : n < 80 ? 2 : 3
+        for (let i = 0; i < batch; i++) spawnOne()
+        const delay = n < 20 ? 320 : n < 80 ? 140 : 90
+        spawnTimer = setTimeout(tick, delay)
     }
-    fillRaf = requestAnimationFrame(step)
+    tick()
 }
 const stopFinale = () => {
-    if (fillRaf) cancelAnimationFrame(fillRaf)
-    fillRaf = null
+    clearTimeout(spawnTimer)
+    spawnTimer = null
     document.body.style.overflow = ''
 }
 watch(
@@ -162,6 +175,9 @@ watch(
     open => (open ? nextTick(startFinale) : stopFinale()),
 )
 onBeforeUnmount(stopFinale)
+
+// TEMP (testing): keep the finale open on every page load. Set to false to disable.
+const FORCE_FINALE_FOR_TESTING = true
 
 // Clicks on anything marked data-damage="N" cost life; data-boss also counts as a hit.
 const onClick = e => {
@@ -178,6 +194,7 @@ const onClick = e => {
 
 onMounted(() => {
     game.hydrate()
+    if (FORCE_FINALE_FOR_TESTING) game.rewardOpen = true
     window.addEventListener('click', onClick)
 })
 onBeforeUnmount(() => window.removeEventListener('click', onClick))
@@ -212,31 +229,22 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 .finale {
     background: color-mix(in srgb, var(--color-black) calc(var(--cover) * 100%), transparent);
 }
-.finale-cell {
-    display: grid;
-    place-items: center;
-    background: var(--color-black);
-    visibility: hidden;
-}
-.finale-cell.is-on {
-    visibility: visible;
-    animation: cell-pop 0.35s steps(4, end) both;
-}
-.finale-cell img {
-    width: 88%;
-    height: 88%;
-    object-fit: contain;
+.finale-sprite {
+    position: absolute;
+    height: auto;
     image-rendering: pixelated;
     user-select: none;
+    pointer-events: none;
+    animation: sprite-pop 0.3s steps(4, end) both;
 }
-@keyframes cell-pop {
+@keyframes sprite-pop {
     from {
         transform: scale(0);
     }
 }
 @media (prefers-reduced-motion: reduce) {
     .floater,
-    .finale-cell,
+    .finale-sprite,
     .ko {
         animation: none;
     }
