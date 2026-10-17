@@ -5,7 +5,6 @@
         aria-hidden="true"
     >
         <div class="hud notch flex items-center gap-3 bg-black px-3 py-2.5 text-white">
-            <span class="text-(--ink-soft)">Scroll</span>
             <span class="flex gap-[3px]">
                 <span
                     v-for="n in SEGMENTS"

@@ -11,9 +11,24 @@
             </NuxtLink>
 
             <div class="flex items-start gap-x-6">
-                <span class="hud chip notch hidden lg:inline-flex tabular-nums" v-if="clock">
-                    <span class="text-(--ink-soft)">Local</span>{{ clock }}
-                </span>
+                <!-- RPG-style life bar (purely aesthetic for now) -->
+                <div
+                    class="hp hidden items-center gap-3 lg:flex"
+                    role="img"
+                    aria-label="Health points: full"
+                >
+                    <svg class="hp-heart" viewBox="0 0 9 8" width="18" height="16" aria-hidden="true" shape-rendering="crispEdges">
+                        <path
+                            fill="currentColor"
+                            d="M1 0h2v1h1v1h1V1h1V0h2v1h1v3H8v1H7v1H6v1H5v1H4V7H3V6H2V5H1V4H0V1h1z"
+                        />
+                    </svg>
+                    <span class="hud text-(--ink-soft)">HP</span>
+                    <span class="hp-bar flex gap-[3px] p-[3px]" aria-hidden="true">
+                        <span v-for="n in 10" :key="n" class="hp-seg" :style="{ '--i': n }" />
+                    </span>
+                    <span class="hud tabular-nums">100/100</span>
+                </div>
                 <CommonHeaderPrimaryNav
                     v-if="navItems && navItems.length"
                     :menuIsOpened="menuState.isOpened"
@@ -29,8 +44,6 @@
                 </button>
             </div>
         </nav>
-        <!-- scroll progress: a flat red line along the bar's lower edge -->
-        <div class="header-progress" aria-hidden="true" />
     </header>
 </template>
 
@@ -52,13 +65,6 @@ const onContactClick = () => {
 }
 
 const header = ref(null)
-const clock = ref('')
-let clockTimer = null
-
-const tickClock = () => {
-    clock.value = new Date().toLocaleTimeString('en-GB')
-}
-
 onBeforeMount(() => {
     // open the nav on desktop, collapse it on mobile (also on resize)
     const mq = window.matchMedia('(min-width: 768px)')
@@ -69,29 +75,51 @@ onBeforeMount(() => {
     })
 })
 
-onMounted(() => {
-    tickClock()
-    clockTimer = setInterval(tickClock, 1000)
-})
-onBeforeUnmount(() => clearInterval(clockTimer))
 </script>
 
 <style scoped>
-.header-progress {
-    height: 3px;
-    background: var(--color-red);
-    transform-origin: left;
-    transform: scaleX(0);
+.hp-heart {
+    color: var(--color-red);
+    animation: heartbeat 1.6s steps(1, end) infinite;
 }
-@supports (animation-timeline: scroll()) {
-    .header-progress {
-        animation: header-progress linear both;
-        animation-timeline: scroll(root);
+@keyframes heartbeat {
+    0%,
+    60% {
+        transform: scale(1);
+    }
+    70% {
+        transform: scale(1.18);
+    }
+    80% {
+        transform: scale(1);
+    }
+    90% {
+        transform: scale(1.12);
     }
 }
-@keyframes header-progress {
-    to {
-        transform: scaleX(1);
+
+/* Bar: dark well, red pixel segments that light up one after another on load */
+.hp-bar {
+    background: color-mix(in srgb, var(--color-white) 12%, transparent);
+    outline: 2px solid var(--color-white);
+    outline-offset: -2px;
+}
+.hp-seg {
+    width: 9px;
+    height: 14px;
+    background: var(--color-red);
+    animation: seg-in 0.2s steps(1, end) both;
+    animation-delay: calc(var(--i) * 70ms + 400ms);
+}
+@keyframes seg-in {
+    from {
+        opacity: 0.12;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .hp-heart,
+    .hp-seg {
+        animation: none;
     }
 }
 </style>
