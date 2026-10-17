@@ -3,12 +3,12 @@ const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_KEY;
 const MAILCHIMP_AUDIENCE_ID = process.env.MAILCHIMP_AUDIENCE_ID;
 
 
-const axios = require('axios');
-var crypto = require('crypto');
+import axios from 'axios'
+import crypto from 'node:crypto'
 
 const apiRoot = `https://${MAILCHIMP_SERVER_PREFIX}.api.mailchimp.com/3.0/lists/${MAILCHIMP_AUDIENCE_ID}/members/`;
 
-const handler = async (event) => {
+export const handler = async (event) => {
 	try {
 
 		const email = event.queryStringParameters.email;
@@ -53,5 +53,3 @@ const handler = async (event) => {
 		return { statusCode: 500, body: error.toString() }
 	}
 }
-
-module.exports = { handler }
