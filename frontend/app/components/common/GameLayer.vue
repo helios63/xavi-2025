@@ -188,7 +188,7 @@ watch(
 onBeforeUnmount(stopFinale)
 
 // TEMP (testing): keep the finale open on every page load. Set to false to disable.
-const FORCE_FINALE_FOR_TESTING = true
+const FORCE_FINALE_FOR_TESTING = false
 
 // Clicks on anything marked data-damage="N" cost life; data-boss also counts as a hit.
 const onClick = e => {
