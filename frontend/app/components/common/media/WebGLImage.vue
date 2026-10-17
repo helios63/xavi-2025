@@ -38,6 +38,10 @@ const props = defineProps({
     format: { type: String, default: 'auto' },
     alt: { type: String, default: '' },
     duration: { type: Number, default: 1800 },
+    // 'hover': pixelated at rest, resolves on hover (pointer devices).
+    // 'view': resolves once as it scrolls into view, then hands back to the plain <img>.
+    trigger: { type: String, default: 'hover' },
+    delay: { type: Number, default: 0 },
 })
 
 const wrapEl = ref(null)
@@ -299,6 +303,9 @@ const tickProgress = () => {
         draw(currentProgress)
         rafId = null
         lastFrameTime = 0
+        // Once resolved there is nothing left to render: release the GL context
+        // (browsers cap live contexts) and let the <img> take over.
+        if (props.trigger === 'view' && currentProgress === 1) fallback()
     }
 }
 
@@ -357,7 +364,8 @@ const attachReveal = () => {
         entries => {
             entries.forEach(e => {
                 if (e.isIntersecting) {
-                    setTarget(1)
+                    if (props.delay) setTimeout(() => setTarget(1), props.delay)
+                    else setTarget(1)
                     if (interObs) {
                         interObs.disconnect()
                         interObs = null
@@ -365,7 +373,7 @@ const attachReveal = () => {
                 }
             })
         },
-        { threshold: 0.3 },
+        { threshold: props.trigger === 'view' ? 0.2 : 0.3 },
     )
     interObs.observe(wrapEl.value)
 }
@@ -392,7 +400,7 @@ onMounted(() => {
             if (rafId == null && gl && textureReady) draw(currentProgress)
         })
         resizeObs.observe(wrapEl.value)
-        if (hasHover) {
+        if (hasHover && props.trigger === 'hover') {
             attachHover()
         } else {
             attachReveal()

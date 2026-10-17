@@ -1,7 +1,8 @@
 <template>
-    <div class="page-body flex flex-col flex-1 h-full gap-y-2 container">
+    <div class="page-body px-(--margin) pb-[18vh] pt-40">
         <CommonBlockContent
-            class="border p-4"
+            v-reveal
+            class="page-content max-w-[60ch]"
             :blocks="pageData?.content"
             :title="pageData?.title"
         />

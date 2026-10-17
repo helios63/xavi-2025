@@ -1,10 +1,10 @@
 <template>
     <Html class="text-base">
-        <Body class="antialiased font-default text-white bg-black">
+        <Body class="antialiased font-default text-base text-white bg-black">
             <NuxtLoadingIndicator
                 :throttle="200"
                 :height="3"
-                :color="'#a2a2a2'"
+                :color="'#f33c17'"
             />
             <div id="__layout">
                 <NuxtLayout>
@@ -77,18 +77,25 @@ useHead({
               },
           ]
         : [],
-    script: gtmID
-        ? [
-              {
-                  src: '/js/analytics.js',
-                  type: 'text/plain',
-                  'data-analytics-type': 'gtm',
-                  'data-category': 'analytics',
-                  'data-gtmid': gtmID,
-                  body: false,
-              },
-          ]
-        : [],
+    script: [
+        {
+            // Lets CSS hide [data-reveal] content only when scripts actually run
+            innerHTML: "document.documentElement.classList.add('has-js')",
+            tagPosition: 'head',
+        },
+        ...(gtmID
+            ? [
+                  {
+                      src: '/js/analytics.js',
+                      type: 'text/plain',
+                      'data-analytics-type': 'gtm',
+                      'data-category': 'analytics',
+                      'data-gtmid': gtmID,
+                      body: false,
+                  },
+              ]
+            : []),
+    ],
 })
 </script>
 

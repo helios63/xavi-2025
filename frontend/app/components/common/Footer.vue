@@ -1,81 +1,85 @@
 <template>
-    <footer id="footer" class="z-70 pointer-events-none">
-        <button
-            @click="togglePopup"
-            class="px-1 fixed top-2 right-2 z-10 uppercase cursor-pointer pointer-events-auto font-secondary text-md text-black bg-white"
-            :class="{ 'preload-mask': preloadActive, 'is-revealed': preloadStep >= 4 }"
-        >
-            {{ isPopupOpen ? 'Close' : 'Info' }}
-        </button>
-        <div
-            class="popup p-4 bg-black/80 backdrop-blur h-dvh transition-transform duration-300 flex flex-col justify-end gap-y-4 pointer-events-auto"
-            :class="isPopupOpen ? 'translate-x-0' : 'translate-x-full'"
-        >
-            <ul class="flex flex-col gap-y-4 *:text-sm *:md:text-base">
-                <li v-if="contact?.address" class="py-1 lg:py-0">
-                    <div
-                        class="not-italic whitespace-pre-line"
-                        v-html="contact.address"
-                    />
-                </li>
-                <li v-if="contact?.email">
-                    <!-- <span class="uppercase underline">Contact me</span> -->
-                    <a
-                        :href="'mailto:' + contact.email"
-                        class="hover:underline block py-1 lg:py-0"
-                        >{{ contact.email }}</a
-                    >
-                </li>
-            </ul>
-            <ul
-                class="col-span-6 lg:col-span-2 flex flex-col gap-y-1 lg:gap-y-0"
+    <!-- Closing section, inverse of the page: the email is the display type. -->
+    <footer
+        id="contact"
+        data-section="contact"
+        class="closing relative z-20 flex min-h-svh flex-col justify-between bg-white text-black px-(--margin) pt-[18vh] pb-[5vh]"
+    >
+        <div class="flex flex-wrap items-start justify-between gap-6">
+            <p v-reveal class="max-w-[22ch] text-md">
+                Have a character in mind? Tell me about it.
+            </p>
+            <button
+                v-if="contact?.email"
+                v-reveal="1"
+                class="hud notch bg-black px-4 py-3 text-white transition-colors duration-200 hover:bg-red hover:text-black"
+                data-cursor="Copy"
+                @click="copyEmail"
             >
-                <li v-for="item in legalLinks">
-                    <a
-                        :href="`/${item?.slug?.current}/`"
-                        class="hover:underline block py-1 lg:py-0"
-                        >{{ item?.title }}</a
-                    >
-                </li>
-            </ul>
-            <ul class="text-sm md:text-base">
-                <li v-for="item in socialLinks">
-                    <a
-                        target="_blank"
-                        :href="item?.url"
-                        class="hover:underline block py-1 lg:py-0"
-                        >{{ item?.title }}</a
-                    >
-                </li>
-            </ul>
-            <div class="col-span-12 lg:col-span-4 flex-col flex mt-4 lg:mt-0">
-                <!-- <CommonFooterMailchimpSubscription
-                class="lg:text-right w-fit lg:ml-auto"
-            /> -->
+                {{ copied ? 'Copied ✓' : 'Copy email' }}
+            </button>
+        </div>
+
+        <div class="my-[10vh]">
+            <a
+                v-if="contact?.email"
+                v-fit
+                v-reveal:mask
+                :href="'mailto:' + contact.email"
+                class="closing-email block w-full font-display text-[8vw] hover:text-red transition-colors duration-300"
+                data-cursor="Write"
+            >
+                <span data-fit class="inline-block whitespace-nowrap">{{ contact.email }}</span>
+            </a>
+        </div>
+
+        <div class="flex flex-col gap-10 md:flex-row md:items-end md:justify-between text-base">
+            <div v-reveal class="flex flex-col gap-3">
                 <div
-                    class="lg:ml-auto lg:text-right lg:whitespace-pre-line mt-1"
-                >
+                    v-if="contact?.address"
+                    class="not-italic whitespace-pre-line md:columns-3"
+                    v-html="contact.address"
+                />
+                <ul class="flex flex-wrap gap-x-6 gap-y-1 text-sm">
+                    <li v-for="item in legalLinks" :key="item?._id">
+                        <NuxtLink :to="`/${item?.slug?.current}/`" class="link-slide">{{ item?.title }}</NuxtLink>
+                    </li>
+                </ul>
+            </div>
+            <div v-reveal="1" class="flex flex-col gap-3 md:items-end md:text-right">
+                <ul class="flex flex-wrap gap-x-6 gap-y-1 md:justify-end">
+                    <li v-for="item in socialLinks" :key="item?.url">
+                        <a target="_blank" rel="noopener" :href="item?.url" class="link-slide">{{ item?.title }}</a>
+                    </li>
+                </ul>
+                <div class="text-sm opacity-70 max-w-[60ch] md:ml-auto">
                     <CommonTextContent :blocks="credits" />
                 </div>
+                <p class="text-sm opacity-70 max-w-[60ch] md:ml-auto">
+                    Game sprites: Chun-Li © CAPCOM, Mai Shiranui © SNK. Fan pixel art; all rights belong to their
+                    respective owners.
+                </p>
             </div>
         </div>
     </footer>
 </template>
 
 <script setup>
+const copied = ref(false)
+const copyEmail = async () => {
+    try {
+        await navigator.clipboard.writeText(props.contact.email)
+        copied.value = true
+        setTimeout(() => (copied.value = false), 1800)
+    } catch {
+        window.location.href = 'mailto:' + props.contact.email
+    }
+}
+
 const props = defineProps({
     contact: Object,
     socialLinks: Object,
     legalLinks: Array,
     credits: Array,
 })
-
-const preloadStep = useState('home-preload-step', () => 99)
-const preloadActive = useState('home-preload-active', () => false)
-
-let isPopupOpen = ref(false)
-
-function togglePopup() {
-    return (isPopupOpen.value = !isPopupOpen.value)
-}
 </script>

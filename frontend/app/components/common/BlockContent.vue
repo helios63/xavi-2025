@@ -1,9 +1,9 @@
 <template>
     <article
-        class="content flex flex-col flex-1 gap-y-2  p-4 whitespace-pre-line"
+        class="content flex flex-col flex-1 gap-y-4 whitespace-pre-line"
     >
         <header v-if="title">
-            <h1 class="text-lg font-bold">{{ title }}</h1>
+            <h1 class="font-display mb-8 whitespace-normal text-[clamp(48px,9vw,140px)]">{{ title }}</h1>
         </header>
         <!-- example of per block iteration -->
         <!-- <slot
