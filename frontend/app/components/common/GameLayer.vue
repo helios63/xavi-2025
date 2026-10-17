@@ -81,8 +81,8 @@
             <p
                 class="notch absolute bottom-[max(8px,env(safe-area-inset-bottom))] left-1/2 z-2000 w-[min(640px,calc(100vw-32px))] -translate-x-1/2 bg-black p-2 text-center text-[11px] leading-snug text-white"
             >
-                Chun-Li © CAPCOM · Mai Shiranui © SNK. Sprite animations are fan pixel art; all rights belong to
-                their respective owners.
+                Mai Shiranui &amp; Mature © SNK · Kitana © Midway / Warner Bros. Sprite animations are fan pixel art;
+                all rights belong to their respective owners.
             </p>
 
             <div
@@ -119,9 +119,11 @@ const open = ref(false)
 // Native pixel-grid sizes: sprites are only ever shown at whole multiples of these,
 // so every art pixel stays a perfect square on screen.
 const SPRITES = [
-    { src: '/sprites/chun-walk.webp', w: 69, h: 82 },
-    { src: '/sprites/chun-red.webp', w: 120, h: 150 },
-    { src: '/sprites/mai-fan.webp', w: 150, h: 119 },
+    { src: '/sprites/mai-kof98a.webp', w: 188, h: 152 },
+    { src: '/sprites/mai-kof98b.webp', w: 166, h: 114 },
+    { src: '/sprites/kitana-fix.webp', w: 60, h: 131 },
+    { src: '/sprites/kitana-win.webp', w: 90, h: 129 },
+    { src: '/sprites/mature.webp', w: 89, h: 111 },
 ]
 const MAX_SPRITES = 400 // oldest ones are buried anyway; drop them to keep the DOM light
 const OPAQUE_AFTER = 45
